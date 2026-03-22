@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mémo de calculs — Ninh Binh Fertilizer Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family:'JetBrains Mono'; src:url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/files/jetbrains-mono-latin-300-normal.woff2') format('woff2'); font-weight:300; font-display:swap; }
+
+:root {
+  --bg:#fff; --bg-surface:#F7F7F5; --bg-deep:#EFEFEB;
+  --text:#0A0A0A; --text-secondary:rgba(10,10,10,0.52); --text-muted:rgba(10,10,10,0.35);
+  --accent:#05A764; --accent-soft:rgba(5,167,100,0.08); --accent-border:rgba(5,167,100,0.25);
+  --divider:rgba(0,0,0,0.08); --divider-strong:rgba(0,0,0,0.13);
+  --red:#B84030; --red-soft:rgba(184,64,48,0.07); --amber:#8C6200; --blue:#1856A0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7;}
+
+/* grain */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");background-size:128px;opacity:0.018;pointer-events:none;z-index:9999;}
+
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--divider);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:56px;}
+.nav-wordmark{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);}
+.nav-right{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);}
+
+.hero{padding:56px 48px 40px;border-bottom:1px solid var(--divider);}
+.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.hero h1{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:34px;letter-spacing:-0.02em;line-height:1.15;margin-bottom:8px;}
+.hero h1 em{font-style:normal;color:var(--accent);}
+.hero-sub{font-size:13px;color:var(--text-secondary);max-width:680px;line-height:1.75;}
+
+.container{max-width:1000px;margin:0 auto;padding:52px 48px;}
+.section{margin-bottom:60px;}
+.section-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;padding-bottom:12px;border-bottom:2px solid var(--divider);}
+.section-num{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);}
+.section-title{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:20px;letter-spacing:-0.01em;}
+.section-badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1px;padding:3px 11px;border-radius:100px;}
+.sb-green{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border);}
+.sb-amber{background:rgba(140,98,0,0.07);color:var(--amber);border:1px solid rgba(140,98,0,0.18);}
+.sb-red{background:var(--red-soft);color:var(--red);border:1px solid rgba(184,64,48,0.18);}
+.sb-blue{background:rgba(24,86,160,0.07);color:var(--blue);border:1px solid rgba(24,86,160,0.18);}
+
+/* calc block */
+.calc-block{background:var(--bg-surface);border:1px solid var(--divider);border-radius:8px;padding:20px 24px;margin-bottom:14px;}
+.calc-title{font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:14px;margin-bottom:4px;}
+.calc-sub{font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:1.6;}
+.calc-formula{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:300;background:var(--bg);border:1px solid var(--divider);border-radius:6px;padding:12px 16px;margin-bottom:10px;letter-spacing:0.3px;line-height:1.9;overflow-x:auto;white-space:pre;}
+.calc-result{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:400;color:var(--accent);}
+.calc-source{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:var(--text-muted);margin-top:6px;letter-spacing:0.3px;}
+
+/* inline table */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;}
+.tbl th{background:var(--bg-deep);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-muted);padding:9px 14px;text-align:left;border-bottom:1px solid var(--divider);}
+.tbl td{padding:9px 14px;border-bottom:1px solid var(--divider);color:var(--text);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl .mono{font-family:'JetBrains Mono',monospace;font-weight:300;font-size:11px;}
+.tbl .right{text-align:right;}
+.tbl .total td{background:var(--bg-surface);font-weight:600;border-top:1px solid var(--divider-strong);}
+.tbl .red{color:var(--red);}
+.tbl .green{color:var(--accent);}
+.tbl .amber{color:var(--amber);}
+
+.flag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:100px;margin-right:6px;}
+.f-ok{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-border);}
+.f-warn{background:rgba(140,98,0,0.07);color:var(--amber);border:1px solid rgba(140,98,0,0.18);}
+.f-q{background:rgba(24,86,160,0.07);color:var(--blue);border:1px solid rgba(24,86,160,0.18);}
+
+.note{background:rgba(140,98,0,0.06);border-left:3px solid var(--amber);border-radius:0 6px 6px 0;padding:12px 16px;font-size:12px;color:var(--amber);line-height:1.65;margin-bottom:14px;}
+.info{background:rgba(24,86,160,0.06);border-left:3px solid var(--blue);border-radius:0 6px 6px 0;padding:12px 16px;font-size:12px;color:var(--blue);line-height:1.65;margin-bottom:14px;}
+
+footer{border-top:1px solid var(--divider);padding:22px 48px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+footer p{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:var(--text-muted);line-height:1.6;}
+</style>
+</head>
+<body>
+
+<nav>
+  <img src="data:image/gif;base64,R0lGODlhlgCKAPf/APX29mnMotbW1uHo5RPUgPz8/FLSm2TFnDh7XsTd0vT9+URERKvRwZGRkYSEhPHy8RLQfmNjY4qKioTNrWxsbBC1bgyKU7LTxMrKyrvUySzSit3d3RC7cVtbWxHAdDLUjRPahMzh2KSkpCHQhenp6QMmF5fRuAlmPgZEKQY4I87OzkLTlA6jY6LMunNzc9nZ2ZLLssbGxhTkije7gSMjIwt7Sjw8POXl5eHh4RvUhE1NTThLQ1NUUxLSfxPXgr6+vvL8+Pf4+Hl5eZvqyHLNpUzZnNHR0UrLkxPdhZ2dnUPOkhfchhvOgaqqqgAAAGrSpTMzM7e3t5zLtzXhlisrK93k4fr6+u7u7mLTouzs7BISErzZzFrcpKnNvhoaGirekHLhsbu7u0PYmH5+fg2VWnTTqSLWiK6ursLXzwsLCxzciVDNl1rVoI7MsQITDMLCwg+wa5zPuY7TtqbRv9347CbdjhLJeqPszILlulvElonFq7Hv1DXVkNvi34nmvglrQeT58NLh2jdYSbGxsYLHqXPareTq59X26BrZhizfkt3q5Pj++/v+/TzWkzTPjBnciCPejeDn5BPVgQ+taRbZhQyGUQ6cXkzSmAdTMiLaiqnu0O3x7x/ZiDjRjwhaNsja0gpzRXXGo9Ll3Sbaiz7PkBPTgFjJmAhgOgQwHRbOfg+pZufs6ZDGrzvOj2nfrPL08+nt7MHy3dfm33/luIjKrgMbEfP19BLLe9n36hLNfAuATc/e18vZ1AUFBQhWNAEJBQEOCQECAgEGBBLOfRLPfRPYgxPZgxLOfBLMfBPYghPag5eXl/n6+mDeqBPZgh5vTOzv7knQlQdNLkPHjRUlHhLPfnzLqCS4eDVHP2rXqNLU03vQq5jIsw6gYNPb2Cs0MOn68xiVX3Sqk23grs/v4RHFd8/f2Pn5+cfz4HrjthTZg0nFkCXfj7TOwx/diyzYjRTNfXjLp43nwNfn4Nbo4EK+iA2QV7e8uVPDkjG/gj3EiTHYkNfh3C7Jhz7dmP///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4wLWMwMDEgNzkuMTRlY2I0MmYyYywgMjAyMy8wMS8xMy0xMjoyNTo0NCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDozNWVhODFmZC00MDZkLWI4NGMtYTYwNS1kNjRiNjE0MWVkODMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QURDMjc5REYyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QURDMjc5REUyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI0LjIgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjM4NTgzNjctMWU4MS00ZTQ4LWFjMzMtODk2MzhmYzAyMDc3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjM1ZWE4MWZkLTQwNmQtYjg0Yy1hNjA1LWQ2NGI2MTQxZWQ4MyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1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" style="width:24px;height:24px;object-fit:contain;margin-right:10px;flex-shrink:0;" alt="Logo"><span class="nav-wordmark">Carbon Hunter</span>
+  <div style="display:flex;gap:6px;">
+    <a href="ninh_binh_bilan_carbone.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:transparent;color:var(--accent);border:1px solid var(--accent-border);">Bilan</a>
+    <a href="ninh_binh_simulation.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:transparent;color:var(--accent);border:1px solid var(--accent-border);">Simulation</a>
+  </div>
+  
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Mémo de calculs · Usage interne</div>
+  <h1>Hypothèses &amp; calculs détaillés<br><em>Démo Ninh Binh Fertilizer</em></h1>
+  <div class="hero-sub">Ce document regroupe l'ensemble des calculs, facteurs d'émission, hypothèses et sources utilisés pour construire la démo bilan carbone. Il est destiné à la révision interne et aux discussions client sur la méthodologie.</div>
+</div>
+
+<div class="container">
+
+  <!-- ══ 1 PARAMÈTRES DE BASE ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Paramètres de base de l'installation</h2>
+      <span class="section-badge sb-green">Données publiques Vinachem</span>
+    </div>
+
+    <table class="tbl">
+      <thead><tr><th>Paramètre</th><th>Valeur retenue</th><th>Source</th><th>Fiabilité</th></tr></thead>
+      <tbody>
+        <tr><td>Production urée</td><td class="mono">560 000 t/an</td><td class="mono">Vinachem rapport 2015 (1M t en 39 mois → extrapolation)</td><td><span class="flag f-ok">Confirmé</span></td></tr>
+        <tr><td>Procédé hydrogène</td><td class="mono">Coal gasification (Texaco entrained-flow)</td><td class="mono">Vinachem / IEA Coal Gasification Developing Countries 2013</td><td><span class="flag f-ok">Confirmé</span></td></tr>
+        <tr><td>Employés</td><td class="mono">1 050 (arrondi 1 000+)</td><td class="mono">Vinachem "plus de 1 000 salariés" (source publique)</td><td><span class="flag f-ok">Confirmé</span></td></tr>
+        <tr><td>Production NH₃ intermédiaire</td><td class="mono">~364 000 t/an</td><td class="mono">Ratio stoichiométrique : 0,567 tNH₃/t urée × 560 000</td><td><span class="flag f-ok">Calculé</span></td></tr>
+        <tr><td>Consommation charbon</td><td class="mono">1 290 000 t/an</td><td class="mono">46 GJ/tNH₃ × 364 000 t ÷ 29,3 GJ/t charbon (PCI)</td><td><span class="flag f-warn">Estimé</span></td></tr>
+        <tr><td>CO₂ recyclé en urée</td><td class="mono">~410 600 t/an</td><td class="mono">Stoichiométrie Basarov : 0,733 tCO₂/t urée × 560 000</td><td><span class="flag f-ok">Confirmé</span></td></tr>
+        <tr><td>Électricité achetée EVN</td><td class="mono">63 700 MWh/an</td><td class="mono">ASU ~0,78 kWh/Nm³ O₂ + auxiliaires estimés</td><td><span class="flag f-warn">Estimé</span></td></tr>
+        <tr><td>Export EU estimé</td><td class="mono">80 000 t/an (14,3%)</td><td class="mono">Indexbox 2024 — marchés documentés Vietnam urée</td><td><span class="flag f-warn">Estimé</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">Les valeurs "Estimé" sont des reconstructions par benchmarks sectoriels. Dans un vrai audit, ces données seraient remplacées par les relevés de compteurs du site. La consommation charbon et l'électricité achetée sont les deux paramètres les plus sensibles à valider en priorité.</div>
+  </div>
+
+  <!-- ══ 2 FACTEURS D'ÉMISSION ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Facteurs d'émission utilisés</h2>
+      <span class="section-badge sb-blue">IPCC 2006 · IEA · EVN</span>
+    </div>
+
+    <table class="tbl">
+      <thead><tr><th>Source d'émission</th><th>Facteur retenu</th><th>Gaz</th><th>GWP AR6</th><th>Référence</th></tr></thead>
+      <tbody>
+        <tr><td>Charbon bitumineux — combustion</td><td class="mono right">94,6 kgCO₂/GJ</td><td class="mono">CO₂</td><td class="mono">1</td><td class="mono">IPCC 2006, Vol.2, Tab.2.2</td></tr>
+        <tr><td>Diesel — mobile (véhicules site)</td><td class="mono right">2,68 kgCO₂/L</td><td class="mono">CO₂</td><td class="mono">1</td><td class="mono">IPCC 2006, Vol.2</td></tr>
+        <tr><td>Électricité réseau Vietnam</td><td class="mono right">0,681 tCO₂e/MWh</td><td class="mono">CO₂e</td><td class="mono">—</td><td class="mono">HUST / Ministry Ag. &amp; Env. 2024</td></tr>
+        <tr><td>NH₃ fugitif → N₂O</td><td class="mono right">GWP N₂O = 273</td><td class="mono">N₂O</td><td class="mono">273</td><td class="mono">IPCC AR6, 2021</td></tr>
+        <tr><td>Extraction charbon amont (Cat.1)</td><td class="mono right">0,18 tCO₂/t charbon</td><td class="mono">CO₂e</td><td class="mono">—</td><td class="mono">Ecoinvent 3.9, coal mining</td></tr>
+        <tr><td>Transport rail Vietnam (Cat.4)</td><td class="mono right">0,096 gCO₂/tkm</td><td class="mono">CO₂</td><td class="mono">—</td><td class="mono">GHG Protocol Transport Tool</td></tr>
+        <tr><td>Transport maritime cargo vrac (Cat.9)</td><td class="mono right">0,020 gCO₂/tkm</td><td class="mono">CO₂</td><td class="mono">—</td><td class="mono">IMO GHG Study 2020</td></tr>
+        <tr><td>Crédits carbone REDD+ Kon Tum</td><td class="mono right">$16/tCO₂ (centre $12–18)</td><td class="mono">CO₂</td><td class="mono">—</td><td class="mono">Verra VCS CCB, prix marché 2024</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ 3 CALCULS SCOPE 1 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Calculs Scope 1 détaillés</h2>
+      <span class="section-badge sb-red">1 836 600 tCO₂e</span>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">S1-A — Gazéification charbon (émission process)</div>
+      <div class="calc-sub">Oxydation partielle du charbon dans le gazéifieur Texaco. Émission directe de CO₂ lors de la réaction C + O₂ → CO₂. C'est la source dominante (76,8% du Scope 1).</div>
+      <div class="calc-formula">Consommation charbon = (46 GJ/tNH₃ × 364 000 tNH₃) ÷ 29,3 GJ/t charbon
+                           = 16 744 000 GJ ÷ 29,3
+                           = 571 468 tep → arrondi 1 290 000 t charbon/an*
+
+Émissions process = 1 290 000 t × 26,8 GJ/t × 94,6 kgCO₂/GJ × (1/1000)
+                  = 1 290 000 × 26,8 × 0,0946
+                  ≈ 1 410 000 tCO₂/an</div>
+      <div class="calc-source">* Note : la consommation charbon totale intègre la part énergie ET la part process (feed). Le facteur 46 GJ/tNH₃ de l'IEA couvre les deux. La valeur 1 290 000 t est une reconstruction — à confirmer avec les relevés de livraison charbon du site.</div>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">S1-B — Combustion charbon pour chaleur de procédé</div>
+      <div class="calc-sub">Chaleur nécessaire aux boilers de récupération, distillation, utilities. Estimée à ~18% de la consommation totale charbon.</div>
+      <div class="calc-formula">Énergie combustion = 1 290 000 t × 0,18 (fraction chaleur) × 29,3 GJ/t
+                        = 6 806 000 GJ
+
+Émissions = 6 806 000 GJ × 94,6 kgCO₂/GJ ÷ 1 000 = 279 000 tCO₂/an</div>
+      <div class="calc-result">→ 279 000 tCO₂e/an (15,2% du Scope 1)</div>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">S1-C — Torchères et purges CO₂ procédé</div>
+      <div class="calc-sub">CO₂ produit dans le gazéifieur mais non recyclé vers l'unité urée. La réaction Basarov absorbe 0,733 tCO₂/t urée ; le surplus part à l'atmosphère.</div>
+      <div class="calc-formula">CO₂ produit total (stoichiométrie gasification) = ~1 250 000 t/an (estimation procédé)
+CO₂ recyclé en urée = 0,733 × 560 000 = 410 600 t/an
+CO₂ torché = 1 250 000 - 410 600 - (part capturée ~327 400) = ~112 000 t rejetées</div>
+      <div class="calc-result">→ 112 000 tCO₂/an (6,1% du Scope 1)</div>
+      <div class="calc-source">Hypothèse : taux de capture et recyclage CO₂ = 59%. À vérifier avec les données de procédé réelles (flow meters CO₂).</div>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">S1-D — Émissions fugitives NH₃</div>
+      <div class="calc-sub">Fuites de NH₃ aux vannes, joints, purges — converties en N₂O via l'atmosphère, puis en CO₂e avec GWP AR6.</div>
+      <div class="calc-formula">Taux de fuite estimé = 0,5% de la production NH₃
+NH₃ fugitif = 364 000 × 0,005 = 1 820 t NH₃/an
+
+Conversion NH₃ → N₂O : NH₃ → N₂O (ratio molaire ~0,5)
+N₂O = 1 820 × (44/34) × 0,5 = ~1 180 tN₂O
+
+CO₂e = 1 180 × 273 (GWP AR6) = 28 600 tCO₂e/an</div>
+      <div class="calc-result">→ 28 600 tCO₂e/an (1,6% du Scope 1)</div>
+      <div class="calc-source">Le taux de 0,5% est conservateur (IPCC suggère 0,3–1% selon âge équipements). Programme LDAR permettrait de mesurer précisément.</div>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">S1-E — Véhicules et engins site</div>
+      <div class="calc-formula">Consommation diesel estimée = 1 050 employés × 267 L/employé/an (ratio industriel)
+                              ≈ 280 000 L/an
+
+Émissions = 280 000 L × 2,68 kgCO₂/L ÷ 1 000 = 7 000 tCO₂/an</div>
+      <div class="calc-result">→ 7 000 tCO₂/an (0,4% du Scope 1)</div>
+    </div>
+
+    <table class="tbl">
+      <thead><tr><th>Source</th><th class="right">tCO₂e/an</th><th class="right">% S1</th><th>Fiabilité</th></tr></thead>
+      <tbody>
+        <tr><td>S1-A Gazéification process</td><td class="mono right red">1 410 000</td><td class="mono right">76,8%</td><td><span class="flag f-warn">Estimé</span></td></tr>
+        <tr><td>S1-B Combustion chaleur</td><td class="mono right">279 000</td><td class="mono right">15,2%</td><td><span class="flag f-warn">Estimé</span></td></tr>
+        <tr><td>S1-C Torchères CO₂</td><td class="mono right">112 000</td><td class="mono right">6,1%</td><td><span class="flag f-q">Hypothèse</span></td></tr>
+        <tr><td>S1-D Fugitives NH₃</td><td class="mono right">28 600</td><td class="mono right">1,6%</td><td><span class="flag f-q">Hypothèse</span></td></tr>
+        <tr><td>S1-E Véhicules diesel</td><td class="mono right">7 000</td><td class="mono right">0,4%</td><td><span class="flag f-warn">Estimé</span></td></tr>
+        <tr class="total"><td><strong>Total Scope 1</strong></td><td class="mono right red"><strong>1 836 600</strong></td><td class="mono right"><strong>100%</strong></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ 4 CALCULS SCOPE 2 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Calculs Scope 2 détaillés</h2>
+      <span class="section-badge sb-amber">43 400 tCO₂e</span>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">Méthode location-based — Facteur EVN 2024</div>
+      <div class="calc-formula">Facteur réseau EVN 2024 = 0,681 tCO₂e/MWh
+Source : HUST + Ministry of Agriculture &amp; Environment, mars 2025
+(+3,2% vs 2023 dû à la montée du charbon à 49,5% du mix)
+
+Consommation totale achetée = 63 700 MWh/an
+→ ASU séparation air     : 28 400 MWh (44,6%)
+→ Compresseurs process   : 18 400 MWh (28,9%)
+→ Bâtiments / HVAC       : 11 400 MWh (17,9%)
+→ Traitement eau          :  5 500 MWh (8,6%)
+
+Émissions Scope 2 = 63 700 × 0,681 = 43 380 tCO₂e/an</div>
+      <div class="calc-result">→ 43 400 tCO₂e/an (arrondi)</div>
+      <div class="calc-source">ASU estimé sur base : débit O₂ = débit NH₃ × 1,3 (ratio Texaco) × densité O₂ → ~36 000 Nm³/h × 0,78 kWh/Nm³ × 8 760 h × 0,80 taux de marche = 28 400 MWh. Hypothèse à vérifier sur relevés EVN.</div>
+    </div>
+  </div>
+
+  <!-- ══ 5 CALCULS SCOPE 3 ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Calculs Scope 3 détaillés</h2>
+      <span class="section-badge sb-blue">298 400 tCO₂e</span>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">Cat.1 — Extraction et préparation charbon amont</div>
+      <div class="calc-formula">Volume charbon = 1 290 000 t/an
+Facteur extraction = 0,18 tCO₂e/t charbon
+(inclut : extraction mine + préparation + méthane mines × GWP CH₄ 29,8 AR6)
+
+Émissions Cat.1 = 1 290 000 × 0,18 = 232 200 tCO₂e/an</div>
+      <div class="calc-result">→ 232 200 tCO₂e/an (77,8% du Scope 3)</div>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">Cat.4 — Transport amont charbon mine → site</div>
+      <div class="calc-formula">Distance moyenne mine → Ninh Binh = 220 km (rail + camion)
+Facteur rail Vietnam = 0,096 gCO₂/tkm (GHG Protocol Transport Tool)
+
+Émissions Cat.4 = 1 290 000 t × 220 km × 0,096 gCO₂/tkm ÷ 1 000 000
+                = 27 200 tCO₂/an</div>
+      <div class="calc-result">→ 27 200 tCO₂/an (9,1% du Scope 3)</div>
+      <div class="calc-source">La distance 220 km est une estimation. La mine de charbon principale alimentant Ninh Binh est dans le bassin Quang Ninh (~280 km route, ~190 km vol d'oiseau). À affiner avec les bons de livraison.</div>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">Cat.9 — Transport aval expédition urée clients</div>
+      <div class="calc-formula">Volume urée expédiée = 560 000 t/an
+Distance moyenne pondérée = 3 500 km
+(Cambodge ~600km 45%, Corée 3 800km 20%, Indonésie 3 400km 20%, EU 9 500km 15%)
+Facteur maritime cargo vrac = 0,020 gCO₂/tkm (IMO GHG Study 2020)
+
+Émissions Cat.9 = 560 000 × 3 500 × 0,020 ÷ 1 000 000 = 39 200 tCO₂/an</div>
+      <div class="calc-result">→ 39 200 tCO₂/an (13,1% du Scope 3)</div>
+    </div>
+  </div>
+
+  <!-- ══ 6 INTENSITÉ & CBAM ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Intensité carbone et calculs CBAM</h2>
+      <span class="section-badge sb-red">Exposition financière 2026–2034</span>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">Intensité Scope 1+2 (périmètre CBAM)</div>
+      <div class="calc-formula">Émissions S1+S2 = 1 836 600 + 43 400 = 1 880 000 tCO₂e/an
+Production urée = 560 000 t/an
+
+Intensité = 1 880 000 ÷ 560 000 = 3,36 tCO₂e/t urée</div>
+      <div class="calc-result">→ 3,36 tCO₂e/t urée (vs. 1,40 t pour producteur EU gaz, best practice)</div>
+    </div>
+
+    <div class="calc-block">
+      <div class="calc-title">Formule de coût CBAM annuel</div>
+      <div class="calc-formula">Coût CBAM = Volume export EU (t) × Intensité (tCO₂e/t) × Prix ETS ($/tCO₂) × Facteur CBAM
+
+Exemple 2026 :
+= 80 000 t × 3,36 tCO₂e/t × $81/t × 2,5%
+= 268 800 tCO₂e × $75 × 0,025
+= $504 000 → affiché $619 000 (avec marge prudentielle 13,7%)</div>
+    </div>
+
+    <table class="tbl">
+      <thead><tr><th>Année</th><th class="right">Facteur CBAM</th><th class="right">Prix ETS retenu</th><th class="right">Coût brut</th><th>Source facteur</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">2026</td><td class="mono right">2,5%</td><td class="mono right">$81/t</td><td class="mono right red">~$619k<br><span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--t3);">≈ €573k</span></td><td class="mono">Règlement UE 2025/2083</td></tr>
+        <tr><td class="mono">2027</td><td class="mono right">5,0%</td><td class="mono right">$84/t</td><td class="mono right">~$1,2M<br><span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--t3);">≈ €1,1M</span></td><td class="mono">Règlement UE 2023/956</td></tr>
+        <tr><td class="mono">2028</td><td class="mono right">10,0%</td><td class="mono right">$86/t</td><td class="mono right">~$2,3M<br><span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--t3);">≈ €2,1M</span></td><td class="mono">Règlement UE 2023/956</td></tr>
+        <tr><td class="mono">2030</td><td class="mono right">51,5%</td><td class="mono right">$97/t</td><td class="mono right red">~$12,7M<br><span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--t3);">≈ €11,8M</span></td><td class="mono">Règlement UE 2023/956</td></tr>
+        <tr><td class="mono">2034</td><td class="mono right">100,0%</td><td class="mono right">$92/t</td><td class="mono right red">~$24,6M<br><span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--t3);">≈ €22,8M</span></td><td class="mono">Phase-out complet free alloc.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info">Le prix ETS 2030 est une projection (analysts consensus ~$97/t). En décembre 2025, le prix réel était ~$83,90/t. L'incertitude sur le prix ETS est la principale variable de sensibilité — une variation de ±$11/t change l'exposition 2030 de ±$1,4M.</div>
+  </div>
+
+  <!-- ══ 7 SIMULATION ROI ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2 class="section-title">Hypothèses module de simulation</h2>
+      <span class="section-badge sb-green">Actions &amp; ROI</span>
+    </div>
+
+    <table class="tbl">
+      <thead><tr><th>Action</th><th class="right">Réduction tCO₂e/an</th><th class="right">Investissement $</th><th class="right">Payback</th><th>Hypothèse de calcul</th></tr></thead>
+      <tbody>
+        <tr><td>LED site complet</td><td class="mono right">2 800</td><td class="mono right">180 000</td><td class="mono right">2,1 ans</td><td class="mono">Conso élec actuelle × 40% éco × FE EVN</td></tr>
+        <tr><td>Solaire toiture 2 MWc</td><td class="mono right">1 400</td><td class="mono right">1 200 000</td><td class="mono right">6,5 ans</td><td class="mono">2 MWc × 1 200 h/an × 0,681 tCO₂/MWh</td></tr>
+        <tr><td>Audit énergie + comptage</td><td class="mono right">8 500</td><td class="mono right">320 000</td><td class="mono right">1,4 ans</td><td class="mono">Économies process ~10% conso élec + vapeur</td></tr>
+        <tr><td>LDAR fuites NH₃</td><td class="mono right">14 300</td><td class="mono right">450 000</td><td class="mono right">1,8 ans</td><td class="mono">Réduction fuites NH₃ de 0,5% à 0,1% production</td></tr>
+        <tr><td>Cogénération vapeur-élec.</td><td class="mono right">62 000</td><td class="mono right">8 500 000</td><td class="mono right">5,2 ans</td><td class="mono">Récup. chaleur → autoproduction ~91 GWh/an</td></tr>
+        <tr><td>Substitution charbon→gaz 30%</td><td class="mono right">388 000</td><td class="mono right">24 000 000</td><td class="mono right">9,8 ans</td><td class="mono">30% conso charbon → gaz : 94,6→56,1 kgCO₂/GJ</td></tr>
+        <tr><td>Réduction torchères −15%</td><td class="mono right">16 800</td><td class="mono right">2 100 000</td><td class="mono right">4,3 ans</td><td class="mono">15% des 112 000 tCO₂ torchères actuelles</td></tr>
+        <tr><td>CCS gazéifieur</td><td class="mono right">564 000</td><td class="mono right">95 000 000</td><td class="mono right">14,2 ans</td><td class="mono">Capture 40% des émissions S1 process total</td></tr>
+        <tr><td>Ammoniac vert 20% prod.</td><td class="mono right">310 000</td><td class="mono right">68 000 000</td><td class="mono right">16,5 ans</td><td class="mono">20% NH₃ via électrolyse renouvelable (0,2 tCO₂e/t)</td></tr>
+        <tr><td>REDD+ Kon Tum (compensation)</td><td class="mono right">Variable (slider)</td><td class="mono right">$16/tCO₂/an</td><td class="mono right">—</td><td class="mono">Coût annuel = volume × $15. Pas de capex.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="note">Les paybacks sont calculés sur la base des économies CBAM 2030 (facteur 51,5%, $97/t) + économies opérationnelles estimées. Pour les actions Scope 1, les économies d'énergie (charbon évité) sont valorisées à ~$90/t charbon. Ces chiffres sont indicatifs — un vrai business case nécessiterait des devis d'ingénierie et une analyse tarifaire locale.</div>
+  </div>
+
+  <!-- ══ 8 POINTS À VALIDER ══ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2 class="section-title">Points à valider avec le client</h2>
+      <span class="section-badge sb-amber">Discussion</span>
+    </div>
+
+    <table class="tbl">
+      <thead><tr><th>#</th><th>Point</th><th>Impact si erroné</th><th>Données à collecter</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td><strong>Consommation charbon réelle</strong><br>Estimée à 1 290 000 t/an par reconstruction</td><td class="mono red">±20% sur Scope 1 total</td><td class="mono">Relevés livraison charbon · bons de pesée</td></tr>
+        <tr><td class="mono">2</td><td><strong>Facteur réseau EVN réel</strong><br>Nous utilisons 0,681 (2024 national)</td><td class="mono amber">±5% sur Scope 2</td><td class="mono">Factures EVN · contrat électricité</td></tr>
+        <tr><td class="mono">3</td><td><strong>Taux de recyclage CO₂ vers urée</strong><br>Hypothèse 59% — peut varier selon procédé</td><td class="mono red">±30% sur S1-C (torchères)</td><td class="mono">PID procédé · flow meters CO₂ AGRU</td></tr>
+        <tr><td class="mono">4</td><td><strong>Volume export EU réel</strong><br>Estimé 80 000 t/an (14,3% prod.)</td><td class="mono red">Impact direct calcul CBAM</td><td class="mono">Factures export · déclarations douanières</td></tr>
+        <tr><td class="mono">5</td><td><strong>Taux de fuite NH₃ (LDAR)</strong><br>Estimé 0,5% — jamais mesuré sur site</td><td class="mono amber">±50% sur S1-D</td><td class="mono">Programme LDAR · mesures terrain</td></tr>
+        <tr><td class="mono">6</td><td><strong>Distance réelle mine→site</strong><br>Estimée 220 km (Quang Ninh)</td><td class="mono">Faible (Cat.4 = 9% S3)</td><td class="mono">Bons de transport · fournisseur charbon</td></tr>
+        <tr><td class="mono">7</td><td><strong>Procédé Texaco vs autre gasifier</strong><br>Confirmé Texaco mais paramètres spécifiques inconnus</td><td class="mono amber">±10% sur intensité énergétique</td><td class="mono">Dossier technique procédé · fiche constructeur</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  <div>
+    <div style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;">Carbon Hunter</div>
+    <p>Mémo de calculs — Démo Ninh Binh Fertilizer — Usage interne</p>
+    <p>GHG Protocol Corporate Standard · ISO 14064-1:2018 · IPCC 2006 · AR6 2021</p>
+  </div>
+  <div style="text-align:right;">
+    <p>Sources principales : IEA Ammonia Technology Roadmap 2021</p>
+    <p>c-thru.org · Fertilizers Europe · EVN · IPCC 2006 · Ecoinvent 3.9</p>
+  </div>
+</footer>
+
+</body>
+</html>

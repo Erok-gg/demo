@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bilan Carbone — Ninh Binh Fertilizer & Chemical Co.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/files/jetbrains-mono-latin-300-normal.woff2') format('woff2');
+    font-weight: 300; font-display: swap;
+  }
+  @font-face {
+    font-family: 'JetBrains Mono';
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/files/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+    font-weight: 400; font-display: swap;
+  }
+
+  :root {
+    --bg: #FFFFFF;
+    --bg-surface: #F7F7F5;
+    --bg-deep: #EFEFEB;
+    --text: #0A0A0A;
+    --text-secondary: rgba(10,10,10,0.52);
+    --text-muted: rgba(10,10,10,0.35);
+    --accent: #05A764;
+    --accent-soft: rgba(5,167,100,0.08);
+    --accent-mid: rgba(5,167,100,0.16);
+    --accent-border: rgba(5,167,100,0.25);
+    --divider: rgba(0,0,0,0.08);
+    --divider-strong: rgba(0,0,0,0.13);
+    --red: #B84030;
+    --red-soft: rgba(184,64,48,0.07);
+    --red-border: rgba(184,64,48,0.18);
+    --amber: #8C6200;
+    --amber-soft: rgba(140,98,0,0.07);
+    --amber-border: rgba(140,98,0,0.18);
+    --blue: #1856A0;
+    --blue-soft: rgba(24,86,160,0.07);
+    --blue-border: rgba(24,86,160,0.18);
+    --gray: #6B7280;
+    --gray-soft: rgba(107,114,128,0.07);
+    --gray-border: rgba(107,114,128,0.18);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 128px;
+    opacity: 0.018;
+    pointer-events: none;
+    z-index: 10000;
+  }
+
+  body {
+    font-family: 'Instrument Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 200;
+    background: rgba(255,255,255,0.93);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--divider);
+    padding: 0 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-wordmark {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 700; font-size: 13px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); white-space: nowrap;
+  }
+  .nav-right {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 300;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); white-space: nowrap;
+  }
+  .nav-sim-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 300;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    padding: 5px 14px; border-radius: 100px;
+    text-decoration: none; white-space: nowrap;
+    transition: background .15s;
+  }
+  .nav-sim-link:hover { background: rgba(5,167,100,0.15); }
+
+  /* ── VERTICAL RAIL ── */
+  .v-rail {
+    position: fixed; right: 18px; top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+  }
+  .v-rail a {
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none; cursor: pointer; padding: 3px 0;
+  }
+  .v-rail-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); opacity: 0; transform: translateX(6px);
+    transition: opacity .2s, transform .2s; white-space: nowrap; pointer-events: none;
+  }
+  .v-rail a:hover .v-rail-label,
+  .v-rail a.active .v-rail-label { opacity: 1; transform: translateX(0); }
+  .v-rail a.active .v-rail-label { color: var(--accent); }
+  .v-rail-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--divider-strong); flex-shrink: 0;
+    transition: background .2s, transform .2s;
+  }
+  .v-rail a:hover .v-rail-dot { background: var(--text-muted); transform: scale(1.3); }
+  .v-rail a.active .v-rail-dot { background: var(--accent); transform: scale(1.4); }
+  @media (max-width: 900px) { .v-rail { display: none; } }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 72px 48px 56px;
+    border-bottom: 1px solid var(--divider);
+    position: relative; overflow: hidden;
+    text-align: center;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 520px; height: 100%;
+    background: radial-gradient(ellipse at top right, rgba(5,167,100,0.055) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 700;
+    font-size: 40px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    line-height: 1.75;
+    margin-bottom: 40px;
+  }
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: 0;
+    border: 1px solid var(--divider);
+    border-radius: 8px; overflow: hidden;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .meta-item {
+    flex: 1; min-width: 140px;
+    padding: 16px 20px;
+    border-right: 1px solid var(--divider);
+    background: var(--bg);
+  }
+  .meta-item:last-child { border-right: none; }
+  .meta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .meta-value {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .meta-value.accent { color: var(--accent); }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1160px; margin: 0 auto; padding: 60px 48px; }
+  .section { margin-bottom: 76px; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--divider);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .section-title {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .section-badge {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .sb-red   { background: var(--red-soft);   color: var(--red);   border: 1px solid var(--red-border); }
+  .sb-amber { background: var(--amber-soft);  color: var(--amber); border: 1px solid var(--amber-border); }
+  .sb-blue  { background: var(--blue-soft);   color: var(--blue);  border: 1px solid var(--blue-border); }
+  .sb-green { background: var(--accent-soft); color: var(--accent);border: 1px solid var(--accent-border); }
+  .sb-gray  { background: var(--gray-soft);   color: var(--gray);  border: 1px solid var(--gray-border); }
+
+  /* ── KPI ── */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 1px; background: var(--divider);
+    border: 1px solid var(--divider); border-radius: 8px; overflow: hidden;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 860px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+  .kpi { background: var(--bg); padding: 24px; position: relative; }
+  .kpi-bar { position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .kpi-bar.s1 { background: var(--red); }
+  .kpi-bar.s2 { background: var(--amber); }
+  .kpi-bar.s3 { background: var(--blue); }
+  .kpi-bar.total { background: linear-gradient(90deg, var(--red) 0%, var(--amber) 50%, var(--blue) 100%); }
+  .kpi-scope {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 300;
+    letter-spacing: 1.8px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .kpi-scope.s1 { color: var(--red); }
+  .kpi-scope.s2 { color: var(--amber); }
+  .kpi-scope.s3 { color: var(--blue); }
+  .kpi-scope.total { color: var(--text-muted); }
+  .kpi-value {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 700; font-size: 30px;
+    letter-spacing: -0.03em; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-value.s1 { color: var(--red); }
+  .kpi-value.s2 { color: var(--amber); }
+  .kpi-value.s3 { color: var(--blue); }
+  .kpi-value.total { color: var(--text); }
+  .kpi-unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 300; letter-spacing: 0.5px;
+    color: var(--text-muted); margin-bottom: 10px;
+  }
+  .kpi-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.55; }
+
+  /* ── CHARTS ── */
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 780px) { .chart-grid { grid-template-columns: 1fr; } }
+  .chart-card {
+    border: 1px solid var(--divider);
+    border-radius: 8px; padding: 22px 24px;
+    background: var(--bg);
+  }
+  .chart-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 300;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 16px;
+  }
+  .chart-h220 { position: relative; height: 220px; }
+  .chart-h260 { position: relative; height: 260px; }
+  .chart-h180 { position: relative; height: 180px; }
+
+  /* ── TABLES ── */
+  .table-wrap { border: 1px solid var(--divider); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .data-table th {
+    background: var(--bg-surface);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 300;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 11px 16px; text-align: left;
+    border-bottom: 1px solid var(--divider);
+  }
+  .data-table td { padding: 12px 16px; border-bottom: 1px solid var(--divider); color: var(--text); vertical-align: top; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--bg-surface); }
+  .data-table .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 300; letter-spacing: 0.3px; }
+  .data-table .right { text-align: right; }
+  .data-table .total-row td { background: var(--bg-surface); font-weight: 600; border-top: 1px solid var(--divider-strong); }
+  .sub-text { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .src-text { font-size: 10px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-weight: 300; }
+
+  /* ── PILLS ── */
+  .pill {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; font-weight: 300;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 100px;
+    white-space: nowrap;
+  }
+  .p-s1 { background: var(--red-soft);   color: var(--red);   border: 1px solid var(--red-border); }
+  .p-s2 { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber-border); }
+  .p-s3 { background: var(--blue-soft);  color: var(--blue);  border: 1px solid var(--blue-border); }
+
+  /* ── PROCESS FLOW ── */
+  .process-flow {
+    display: flex; gap: 1px; overflow-x: auto;
+    background: var(--divider); border: 1px solid var(--divider);
+    border-radius: 8px; overflow: hidden; margin-bottom: 24px;
+  }
+  .proc-step { background: var(--bg); padding: 18px 20px; min-width: 120px; flex: 1; }
+  .proc-name { font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 12px; color: var(--text); margin-bottom: 5px; line-height: 1.3; }
+  .proc-detail { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; letter-spacing: 0.3px; color: var(--text-muted); line-height: 1.5; }
+  .proc-emission { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; color: var(--red); margin-top: 5px; }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── INFO CARD ── */
+  .info-card { border: 1px solid var(--divider); border-radius: 8px; padding: 20px 24px; background: var(--bg); }
+  .card-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--divider);
+  }
+  .info-row { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 12px; }
+  .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-row .k { color: var(--text-secondary); }
+  .info-row .v { font-weight: 600; color: var(--text); text-align: right; }
+  .v-red   { color: var(--red)   !important; }
+  .v-amber { color: var(--amber) !important; }
+  .v-green { color: var(--accent)!important; }
+  .v-blue  { color: var(--blue)  !important; }
+
+  /* ── CALLOUTS ── */
+  .alert-box {
+    background: var(--red-soft); border: 1px solid var(--red-border);
+    border-left: 3px solid var(--red); border-radius: 0 6px 6px 0;
+    padding: 14px 18px; font-size: 12px; color: var(--red);
+    line-height: 1.65; margin-bottom: 20px;
+  }
+  .info-box {
+    background: var(--blue-soft); border: 1px solid var(--blue-border);
+    border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0;
+    padding: 14px 18px; font-size: 12px; color: var(--blue);
+    line-height: 1.65; margin-bottom: 20px;
+  }
+  /* ── ACCORDION ── */
+  .accordion { margin-bottom: 14px; }
+  .accordion summary {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; list-style: none; padding: 10px 16px;
+    background: var(--bg-surface); border: 1px solid var(--divider);
+    border-radius: 8px; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 300; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--text-muted);
+    transition: background 0.15s;
+    user-select: none;
+  }
+  .accordion summary::-webkit-details-marker { display: none; }
+  .accordion summary:hover { background: var(--bg-deep); color: var(--text); }
+  .accordion-arrow {
+    width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s ease; flex-shrink: 0;
+    font-size: 10px; color: var(--text-muted);
+  }
+  details[open] .accordion-arrow { transform: rotate(180deg); }
+  .accordion-body { padding-top: 10px; }
+
+  /* ── TOOLTIP ── */
+  .tip-wrap { position: relative; display: inline-block; }
+  .tip-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--bg-deep); border: 1px solid var(--divider-strong);
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 400;
+    color: var(--text-muted); cursor: help; vertical-align: middle; margin-left: 6px;
+    transition: background 0.15s, color 0.15s; flex-shrink: 0;
+  }
+  .tip-btn:hover { background: var(--text); color: #fff; }
+  .tip-box {
+    position: absolute; bottom: calc(100% + 8px); left: 50%;
+    transform: translateX(-50%); background: #0A0A0A; color: #fff;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300;
+    letter-spacing: 0.3px; line-height: 1.65; padding: 10px 14px;
+    border-radius: 8px; width: 280px; white-space: normal;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  }
+  .tip-box::after {
+    content: ''; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%); border: 5px solid transparent;
+    border-top-color: #0A0A0A;
+  }
+  .tip-wrap:hover .tip-box { opacity: 1; }
+
+  /* ── UNCERTAINTY BADGE ── */
+  .unc-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-top: 1px solid var(--divider);
+    margin-top: 12px;
+  }
+  .unc-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+  .unc-val { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 400; color: var(--amber); background: var(--amber-soft); border: 1px solid var(--amber-border); border-radius: 100px; padding: 2px 10px; }
+
+  /* ── SECTION-HEADER SOURCE TOOLTIP ── */
+  .section-src-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--bg-deep); border: 1px solid var(--divider-strong);
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 400;
+    color: var(--text-muted); cursor: help; margin-left: 8px;
+    transition: background 0.15s; flex-shrink: 0;
+  }
+  .section-src-btn:hover { background: var(--text); color: #fff; }
+  .section-src-box {
+    position: absolute; top: calc(100% + 8px); right: 0;
+    background: #0A0A0A; color: #fff; font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 300; letter-spacing: 0.3px; line-height: 1.65;
+    padding: 10px 14px; border-radius: 8px; width: 340px; white-space: normal;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 500;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  }
+  .section-src-box::before {
+    content: ''; position: absolute; bottom: 100%; right: 5px;
+    border: 5px solid transparent; border-bottom-color: #0A0A0A;
+  }
+  .section-src-wrap { position: relative; display: inline-block; }
+  .section-src-wrap:hover .section-src-box { opacity: 1; }
+
+  .source-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 300; letter-spacing: 0.3px;
+    color: var(--text-muted); line-height: 1.75;
+    padding: 12px 16px; background: var(--bg-surface);
+    border-radius: 6px; margin-top: 12px;
+  }
+
+  /* ── BENCHMARK BARS ── */
+  .bench-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .bench-label { font-size: 12px; color: var(--text-secondary); width: 220px; flex-shrink: 0; }
+  .bench-label strong { color: var(--text); font-weight: 600; }
+  .bench-track { flex: 1; background: var(--divider); border-radius: 3px; height: 5px; overflow: hidden; }
+  .bench-fill { height: 100%; border-radius: 3px; }
+  .bench-val {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300;
+    width: 64px; text-align: right; flex-shrink: 0;
+  }
+
+  /* ── CBAM ── */
+  .cbam-banner {
+    background: var(--red-soft); border: 1px solid var(--red-border);
+    border-radius: 8px; padding: 28px 32px; margin-bottom: 20px;
+  }
+  .cbam-eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 10px;
+  }
+  .cbam-banner h2 {
+    font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 20px;
+    letter-spacing: -0.01em; color: var(--text); margin-bottom: 8px;
+  }
+  .cbam-banner p { font-size: 13px; color: var(--text-secondary); line-height: 1.75; max-width: 720px; }
+
+  .cbam-exposure {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: var(--divider);
+    border: 1px solid var(--divider); border-radius: 8px; overflow: hidden; margin-bottom: 20px;
+  }
+  @media (max-width: 680px) { .cbam-exposure { grid-template-columns: 1fr; } }
+  .exp-card { background: var(--bg); padding: 22px 24px; }
+  .exp-year {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+  }
+  .exp-cost {
+    font-family: 'Instrument Sans', sans-serif; font-weight: 700;
+    font-size: 28px; letter-spacing: -0.02em; color: var(--red); margin-bottom: 4px;
+  }
+  .exp-detail { font-size: 11px; color: var(--text-muted); line-height: 1.55; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 1px; background: var(--divider-strong); }
+  .tl-item { position: relative; margin-bottom: 22px; }
+  .tl-dot {
+    position: absolute; left: -30px; top: 4px;
+    width: 9px; height: 9px; border-radius: 50%;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px currentColor;
+  }
+  .tl-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+  .tl-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .tl-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--divider); margin: 60px 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--divider);
+    padding: 24px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-wordmark {
+    font-family: 'Instrument Sans', sans-serif; font-weight: 700;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+    margin-bottom: 4px;
+  }
+  footer p {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300;
+    letter-spacing: 0.3px; color: var(--text-muted); line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <img src="data:image/gif;base64,R0lGODlhlgCKAPf/APX29mnMotbW1uHo5RPUgPz8/FLSm2TFnDh7XsTd0vT9+URERKvRwZGRkYSEhPHy8RLQfmNjY4qKioTNrWxsbBC1bgyKU7LTxMrKyrvUySzSit3d3RC7cVtbWxHAdDLUjRPahMzh2KSkpCHQhenp6QMmF5fRuAlmPgZEKQY4I87OzkLTlA6jY6LMunNzc9nZ2ZLLssbGxhTkije7gSMjIwt7Sjw8POXl5eHh4RvUhE1NTThLQ1NUUxLSfxPXgr6+vvL8+Pf4+Hl5eZvqyHLNpUzZnNHR0UrLkxPdhZ2dnUPOkhfchhvOgaqqqgAAAGrSpTMzM7e3t5zLtzXhlisrK93k4fr6+u7u7mLTouzs7BISErzZzFrcpKnNvhoaGirekHLhsbu7u0PYmH5+fg2VWnTTqSLWiK6ursLXzwsLCxzciVDNl1rVoI7MsQITDMLCwg+wa5zPuY7TtqbRv9347CbdjhLJeqPszILlulvElonFq7Hv1DXVkNvi34nmvglrQeT58NLh2jdYSbGxsYLHqXPareTq59X26BrZhizfkt3q5Pj++/v+/TzWkzTPjBnciCPejeDn5BPVgQ+taRbZhQyGUQ6cXkzSmAdTMiLaiqnu0O3x7x/ZiDjRjwhaNsja0gpzRXXGo9Ll3Sbaiz7PkBPTgFjJmAhgOgQwHRbOfg+pZufs6ZDGrzvOj2nfrPL08+nt7MHy3dfm33/luIjKrgMbEfP19BLLe9n36hLNfAuATc/e18vZ1AUFBQhWNAEJBQEOCQECAgEGBBLOfRLPfRPYgxPZgxLOfBLMfBPYghPag5eXl/n6+mDeqBPZgh5vTOzv7knQlQdNLkPHjRUlHhLPfnzLqCS4eDVHP2rXqNLU03vQq5jIsw6gYNPb2Cs0MOn68xiVX3Sqk23grs/v4RHFd8/f2Pn5+cfz4HrjthTZg0nFkCXfj7TOwx/diyzYjRTNfXjLp43nwNfn4Nbo4EK+iA2QV7e8uVPDkjG/gj3EiTHYkNfh3C7Jhz7dmP///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4wLWMwMDEgNzkuMTRlY2I0MmYyYywgMjAyMy8wMS8xMy0xMjoyNTo0NCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDozNWVhODFmZC00MDZkLWI4NGMtYTYwNS1kNjRiNjE0MWVkODMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QURDMjc5REYyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QURDMjc5REUyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI0LjIgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjM4NTgzNjctMWU4MS00ZTQ4LWFjMzMtODk2MzhmYzAyMDc3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjM1ZWE4MWZkLTQwNmQtYjg0Yy1hNjA1LWQ2NGI2MTQxZWQ4MyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1dHNycXBvbm1sa2ppaGdmZWRjYmFgX15dXFtaWVhXVlVUU1JRUE9OTUxLSklIR0ZFRENCQUA/Pj08Ozo5ODc2NTQzMjEwLy4tLCsqKSgnJiUkIyIhIB8eHRwbGhkYFxYVFBMSERAPDg0MCwoJCAcGBQQDAgEAACH5BAEAAP8ALAAAAACWAIoAAAj/AP8JHEiwoMGDCBEewiNmRK4RRfzgSkixosWLGDNq3MiRIC5XDnOJHDliHJ2OKFOqXMny4BAmI2PGHDGkpc2bOHHOGiazp8hheHIKHUqUIisfPpP2KFM0YxAcAl7cKNC06kFej5ImReajkNWEPyJQSeMkmBYoQgR8/cqmh9atXdcSNLLAid27doP1ikBCLlFzS95q5ZqN6loRZPEqtksDg1+hciQJHiyp8NckizPb1eL48c08BCZTxmKlaozEmhfT6Ou5pRieouFiCVLUio3UmoNFaM2ygL/Yb5FJYkN7aBPcqXsZ4b1SCQTglNkAGKoDeW4XzFUekAx9qyQDr3KS/9BiXTOU7CmlGOs+2IeBBzijlNesBQf6jlUysX8r6dKmm0IEM19mKtzXUQDc7eeTJNFAY9NtAy7WmYEaDfAFMQr6JJwSq7CEA3kR4tWLWhRudMESx2S4oBKGrDRIiHgF48UVJXIkBRIpqhiTcKS0mJILMOK1QI0dtbAEbDqKJFwrA6QEYZBOOEBkkUcmORIyPUyhSEcboBbkD1N21AWKVo5EjJYcHQelEzOG2REDjyBp5ZmybETBmk7o4CZKFzySY5nHTFFnRlDgKcGefLojZ5LEJCIKRl3iGQOiKG2haJkiNRrCRSKsKSN8lHZk6aI6DvPFphVFICCUPISaUgKQkP+qYjV1JEBRAVTg2YCrr7Ija4bE1JqQNl7COCGvHCXgK6a5EAPJFghhtiYN4SGLUghf/NkdMcRom8sw7kBrUAR4dmCtSiEk8mtPxJRSTDEEIGNHDz4k81ym7mRQEAC5rrnMuSqJoq5Ww5TigzHHVGCBL6iUUAIq0lTigTH3DqPGBXOtGmQvBQKcEj1TuDXSMD0kY0wPCnuCyi+auXFCOUh9+wjGAi3jKQ3neKySLI5IAoEPIPTAgT2noALMfCWwsF6zj3QhUAd47qazSgO04gEZJxgdJDCWJJPpEl0UQAOeSUyN0hU/SICNG3ja5QYc3BHjjjjFRjii2Rk98IYEC3j/0fZiKXArUjG6eEpFaXgn9AoGEujghYDBaPz3XRZ4fYwkKESduEEAqNAAD2NPbl0KEAwDgQe14CnC5v8EYcQyHdAguejICQNHKZJ0g2caL5hthQBJREBDL7QHWXkxoOAJhWHWFvCCCGIRX/yaf4AgSQqzR0gBsgXgIAIFY00/+QlIoI5nE6HicAYFUNQtPp5/yGDJ7hu4ecMgLtjg/vt/WyDDH546T41IEAUh2ABE/Huf7YqRAjxh5z5Z+MEYFoDABCYwBQTwANvWdAbm6M0BfbOgCPHiPzLgSQs3aI0RKOC3yI3whaQDwQk8ZQPPBEEI0nuhDt1QAUn0ABV4EsJj/65QFx0a0Q0s8AEEOLBBKEXBL+dYQPaMyD9UwKEYufCBCdekBdasRQhUHGEwSqCLy4nEGKfA05DkQqww8o8GO6gBC5BRDAx9CwJAXNMY/AIkN4rOLDpwQAzgMwEZ2FEkpajA0dYUBrlcoV9+5OICHPADGhWEEEiIiQ/sgScvZEEuUdhfJHEDjBQ84x6fpAgtMnlGT3hqjWuRwCjn8wtUnMIeHPDBEzDSBhA0axh5hJKU5ALGWWqmlp6wRwUgYAwf9AAEDMgIDJAAgQqwbE1v8IsDjIkXYZTAFxaoQBaL0QPYDCMHkdCICWRggU5a8jA59OMYMVEJOOSimaU45EggcP8JjpggjVAKhp78sgEtTNGCY5SGLiZxi2KAQBnGSEYyfLioZNCCI4z4hqE8U50X9oIa0qiBKuzgg2KUggDGQMYkyGABC1iCAwTwwSGLgQaOvECU5TlWSxjBiIqoiX/BoAEPlrEBIiDBGATAEDGMwYE/lEAYeCmlBYYhmWHso1oa6dS0QJUSIOBiD35ohhg+8AExgGEPQDhIAZ70Ry/ooAEYmI5AnLNPCNRgkZpBhSqMUYoAdIRca2rVRhYBiFgMAQxF0AA8tPKBIfS0ICqo4JrcKoFBGiQQWRFJD5AhjfL8wn8t4Mg5qHDQ8uyqIgWABTk0gQcu8AEm0CkCIAxyhnj/Dsgsk3zDOw8SByw2CwKdnU8wwuEjjWjDthEKhk4FAoA+tEMOB1iBGbzVHXjw4SQFiYLf5qOFBYwhDLuliClKMTgARsgNk9qItKBEhZwVYAAJkEIoDNCPR1hPEtVYF3TEoACD4KADyL2LFmwghCh4ESObeAdPCAAHvA6IBvXTCNTWJAg55KETmTCG9SBwL2aJJCgH0cYYbOCFNKTBCzZwwSBSiJIMsLIYrgySDbhqkSDIbk26kEFSPayVEWAXIVfAAQ7CixJrSOZ0qYOSuTBihNJaJxiqCA2P3yIPuazgOZKYXxAxYrM1lcAO+pxyT4qwFn4gQiQ+qMHfymYRHuBJ/xoxE3NSNLCWOKjjjObdXSML8oBdMGACF66Fk5Gji6XJ2SdMWAsWRFaMPHdSGwPIACsCEI0RLKEYkkACC/AkjElI+dA9ScVXHqABOxZDzZNLwQiQAIJSQOCQxkiel28RZlCLJNFWcfFIckc7FJiuJ5jDEyZ8a2uZfOArhIgzBMqR5Mn5QqYxIcYtSoCnSnit2DLhwleuHBM0Fg8Uvtyn+aD0i9thWyaasEoVcqCtRDbxb8GwhzLE3WwYlYAY+hUzH/pblRaEu9uoFh0wVOHbblEbSp4g9rlzkW6rLLonVMVE8WrBAe74ILjGUzi2wfAVW2igGj7pwTEaSLsU3MItPv8o3NYqILJzu+KxVUHDv3uSwYOLThpJFdq7B4QCH1BXzkyQB8yrMoE4+8QHk9h52/5gjGEUY4YhCgYLEgTqEbjiEH45QsuTYgwyQJV2lQDBsm0+H0/4HOh84MIs9jBbvwyAE6IBQcAn94tuFMMHqnAwclJghw5bKRUaKAIYhhALQCyCOV2Y92ScDlDR1aKHxWCB0jOTAg+QtzvDQBI8RtCIZvhhD4dIK4UCcPnJQKAHmaMdKsphsAqkXjPCOMUtSi+YY/SgB8VQRg74UIR03AEd4Bh6iQCwj3zHpBTlCObkUMBhAvSADChwcDBq4YtJFMPvMuFWD5zhDEqMYhpPYEX/BvpgC1d9wtCxkUQFJr+mU/hgGMfwgSQ4YIlK6MICLIDZp4/vLhDkoBGmQAhdwAv/ATC0oHGiYQzdcE2iUwPhZnuS8C6Ydi/EAAGloAzFgAjvsA5lwA1oEAk5gzdatx8gUAnFIwxkgH65cAzHQACSYAxIMAKkEAB6cAHeUH6sIxCGMF37cQwggAABBiVuMAkUUwogUAw5sA/4sA0t8AmwwDw5SBBdMHPdsQS7cCe0UwLXcAkBIH59UBxRSBGkpyAQ4AgFEEXFswByFYYXEQR8YHxJQQBEIBAkEDqisz1seBG8gIDAAU0DEVnFcyh5WBFtwIexkQkdMhC1RTvBgD6D/5gQBoB9wNEDa2AQDVA8WpBej1gQOwiHPlEMbXAQWCg6NGAfm0gQF0CF0AECn6BWHSU6NoBVp0gEVAcdZRiCBpEFhUI7S3aKzNAJkhgbpbBLCSEA2yU6e3SKgXBnCuKHFBEGOAUjbPaIMGCIomEG6VQR6zU5abBng2gAW2eL/XQRY1A8XkAibAgLo5AhPnBRGDFhogMFqRSGF6CCq9iKGGELbPU3OgCFrBMKRgcdxMAHa3gROGCHk4OHOVgArRCMoiEJB8ARMSBZbXNarBMIlJAhxjAHHdEEg2Y3g5CD3KCKwMEJVYASsvRHnME6WOCQk9EDR6ASqkI7VMBieKMP4f8IHJIwASpRAEUkOgsAhjpzDvmQk7GBBDWlEiQASZMjNVNTAEW5H1YliyhhBBSJJ8M0NSPIHgQQkS0RSsWzOlMTD7V4lBxpE10mOlqAjgCTAfa4eGbQJDfhAh85IILlMQUgBrUmGJLAFDnhZn+kiQBzAUiADMAxDHWQjThxBVBQl+XxQDpDBAFJMCBwlkKxAceIJ8EgQDrDDM3gA4b5FsdQDCbQFG+QBo6JG55kNudgVEYpEpLADtFUFVqlmWkQYWaTAUeABJJAAL7pm8agBgEgl1axTW2jBbhpNgXwCRNgCvUwA/UQAHFAnGsBWJNFY6f4FQDwk0ECS9kpFzeAkCFGkpXfKRcYYFAwwjvl6RmLmFwKuZ5+cYkRQgPzCJ98JFwraZ+tESDW0Rj6yRxRwJSKsRcH9p821ASgkwa90AtnIQTLkR0BAQA7" style="width:24px;height:24px;object-fit:contain;margin-right:10px;flex-shrink:0;" alt="Logo"><span class="nav-wordmark">Carbon Hunter</span>
+  <div style="display:flex;gap:6px;margin-left:auto;">
+    <a href="ninh_binh_bilan_carbone.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:var(--accent);color:#fff;border:1px solid var(--accent);transition:opacity .15s;">Bilan</a>
+    <a href="ninh_binh_simulation.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:transparent;color:var(--accent);border:1px solid var(--accent-border);transition:background .15s;">Simulation</a>
+  </div>
+  
+</nav>
+
+<!-- VERTICAL RAIL -->
+<div class="v-rail">
+  <a href="#benchmark">  <span class="v-rail-label">Benchmark</span>    <span class="v-rail-dot"></span></a>
+  <a href="#overview">   <span class="v-rail-label">Vue d'ensemble</span><span class="v-rail-dot"></span></a>
+  <a href="#process">    <span class="v-rail-label">Procédé</span>       <span class="v-rail-dot"></span></a>
+  <a href="#scope1">     <span class="v-rail-label">Scope 1</span>       <span class="v-rail-dot"></span></a>
+  <a href="#scope2">     <span class="v-rail-label">Scope 2</span>       <span class="v-rail-dot"></span></a>
+  <a href="#scope3">     <span class="v-rail-label">Scope 3</span>       <span class="v-rail-dot"></span></a>
+  <a href="#intensite">  <span class="v-rail-label">Intensité</span>     <span class="v-rail-dot"></span></a>
+  <a href="#cbam">       <span class="v-rail-label">CBAM</span>           <span class="v-rail-dot"></span></a>
+</div>
+
+<!-- DEMO BANNER -->
+<div style="background:#0A0A0A;color:#fff;padding:14px 48px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+  <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:3px;text-transform:uppercase;background:#05A764;color:#fff;padding:3px 10px;border-radius:100px;flex-shrink:0;">Démonstration</span>
+  <span style="flex:1;min-width:280px;">
+    <span style="font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.01em;display:block;margin-bottom:3px;">Ce document illustre l'intérêt commercial et financier d'un bilan carbone à travers des données réalistes reconstituées depuis des benchmarks sectoriels publics.</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.3px;">Le lecteur peut sélectionner des pistes d'amélioration et simuler les bénéfices concrets — réduction d'émissions, économies CBAM, retour sur investissement — qu'il obtiendrait en utilisant nos services. Ce rapport ne constitue pas un audit certifié.</span>
+  </span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Bilan de Gaz à Effet de Serre · Exercice 2024</div>
+  <h1>Ninh Binh Fertilizer &amp; Chemical Co.<br><em>Rapport Carbone Consolidé</em></h1>
+  <div class="hero-sub">Filiale Vinachem · Parc Industriel Khanh Phu, Province de Ninh Binh, Viêt Nam<br>Périmètre : contrôle opérationnel · GHG Protocol Corporate Standard &amp; ISO 14064-1:2018</div>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <div class="meta-label">Émissions totales</div>
+      <div class="meta-value accent">2 178 400 tCO₂e</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Production urée</div>
+      <div class="meta-value">560 000 t/an</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Intensité Scope 1+2</div>
+      <div class="meta-value">3,36 tCO₂e/t urée</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Employés</div>
+      <div class="meta-value">1 050</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Procédé</div>
+      <div class="meta-value">Coal Gasif. → Haber-Bosch</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Vérification</div>
+      <div class="meta-value">Assurance raisonnable</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══ 00 BENCHMARK ══ -->
+  <div class="section" id="benchmark">
+    <div class="section-header">
+      <span class="section-num">00</span>
+      <h2 class="section-title">Positionnement dans le secteur</h2>
+      <span class="section-badge sb-gray">Benchmark sur données publiques</span>
+      <span class="section-src-wrap">
+        <span class="section-src-btn">?</span>
+        <span class="section-src-box">Yara Integrated Report 2024 (yara.com) · PVCFC Sustainability Report 2024 (pvcfc.com.vn) · Fertilizers Europe Carbon Footprint Calculator (DNV-GL verified, 2019) · IFA Measuring and Reporting Fertilizer GHG Emissions (2018)</span>
+      </span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <div class="info-card">
+        <div class="card-label">Modèle de référence mondial — Yara International</div>
+        <div style="font-size:12px;color:var(--text-secondary);line-height:1.75;margin-bottom:14px;">Yara est le leader mondial de la production d'engrais azotés (17 000 employés, 26 sites, USD 13,9 Mrd de revenus en 2024). Leur rapport intégré annuel, désormais conforme CSRD/ESRS, constitue le standard de référence du secteur pour la structure et le niveau de détail d'un bilan carbone fertilisants. Yara publie un KPI d'intensité central en tCO₂e/tN, une cible absolue Scope 1+2 à 2030 et une vérification tierce systématique.</div>
+        <div class="info-row"><span class="k">Intensité GHG (Scope 1+2+3 cat.1)</span><span class="v v-green">~2,4 tCO₂e/tNH₃ (gaz naturel)</span></div>
+        <div class="info-row"><span class="k">Cible de réduction intensité</span><span class="v">−10 % vs. 2018 · atteint 2025</span></div>
+        <div class="info-row"><span class="k">Vérification</span><span class="v">Tierce partie accréditée · ESRS</span></div>
+        <div class="info-row"><span class="k">Référence framework</span><span class="v">GHG Protocol + CSRD + EU Taxonomy</span></div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">Référence locale — PVCFC Ca Mau Fertilizer (Viêt Nam)</div>
+        <div style="font-size:12px;color:var(--text-secondary);line-height:1.75;margin-bottom:14px;">PetroVietnam Ca Mau Fertilizer (PVCFC) est le concurrent direct de Ninh Binh sur le marché vietnamien. Premier prix du rapport de développement durable 2025 (HOSE). Procédé gaz naturel, intensité carbone significativement inférieure au charbon. PVCFC a désigné 2024 comme année de référence pour son inventaire GHG établi par cabinet spécialisé — exactement le même démarche que ce rapport.</div>
+        <div class="info-row"><span class="k">Procédé</span><span class="v">Gaz naturel → Haber-Bosch</span></div>
+        <div class="info-row"><span class="k">Capacité urée</span><span class="v">~800 000 t/an</span></div>
+        <div class="info-row"><span class="k">Cible intensité GHG</span><span class="v">−1 % /t urée d'ici 2030 vs. 2024</span></div>
+        <div class="info-row"><span class="k">Scope 3 publié</span><span class="v v-amber">Partiel — amont uniquement</span></div>
+      </div>
+    </div>
+
+    <div class="info-card" style="margin-bottom:20px;">
+      <details class="accordion">
+        <summary>
+          <span>Comparaison des frameworks — Ce rapport vs. références sectorielles (données publiques)</span>
+          <span class="accordion-arrow">▼</span>
+        </summary>
+        <div class="accordion-body">
+      <div style="overflow-x:auto;margin-top:4px;">
+        <table class="data-table" style="min-width:700px;">
+          <thead>
+            <tr>
+              <th style="width:28%">Élément du bilan</th>
+              <th style="text-align:center">Yara 2024<br><span style="font-size:8px;letter-spacing:.5px;text-transform:none;font-weight:300;color:var(--text-muted)">CSRD/ESRS</span></th>
+              <th style="text-align:center">PVCFC 2024<br><span style="font-size:8px;letter-spacing:.5px;text-transform:none;font-weight:300;color:var(--text-muted)">Vietnam, gaz</span></th>
+              <th style="text-align:center">Fertilizers Europe<br><span style="font-size:8px;letter-spacing:.5px;text-transform:none;font-weight:300;color:var(--text-muted)">Calculateur DNV</span></th>
+              <th style="text-align:center;color:var(--accent)">Ce rapport<br><span style="font-size:8px;letter-spacing:.5px;text-transform:none;font-weight:300;color:var(--accent)">Ninh Binh démo</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="font-size:11px;font-weight:600;color:var(--text-muted);background:var(--bg-surface);letter-spacing:.05em;text-transform:uppercase;" colspan="5">Périmètre & gouvernance</td></tr>
+            <tr><td>Limites organisationnelles définies</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)"><strong>✓</strong></td></tr>
+            <tr><td>Vérification tierce accréditée</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--amber)">Simulé</td></tr>
+            <tr><td style="font-size:11px;font-weight:600;color:var(--text-muted);background:var(--bg-surface);letter-spacing:.05em;text-transform:uppercase;" colspan="5">Scope 1 — Émissions directes</td></tr>
+            <tr><td>Combustion + émissions process CO₂</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)"><strong>✓</strong></td></tr>
+            <tr><td>Émissions fugitives NH₃</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--amber)">~</td><td style="text-align:center;color:var(--amber)">~</td><td style="text-align:center;color:var(--accent)"><strong>✓</strong></td></tr>
+            <tr><td>N₂O acide nitrique (non applicable urée)</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--amber)">~</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--text-muted)">N/A</td></tr>
+            <tr><td style="font-size:11px;font-weight:600;color:var(--text-muted);background:var(--bg-surface);letter-spacing:.05em;text-transform:uppercase;" colspan="5">Scope 2 & 3</td></tr>
+            <tr><td>Scope 2 location-based (réseau national)</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)"><strong>✓</strong></td></tr>
+            <tr><td>Scope 3 Cat.1 — matières premières amont</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--amber)">~</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)"><strong>✓</strong></td></tr>
+            <tr><td>Scope 3 Cat.4+9 — transport amont + aval</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--text-muted)">—</td><td style="text-align:center;color:var(--amber)">~</td><td style="text-align:center;color:var(--accent)"><strong>✓</strong></td></tr>
+            <tr><td>Scope 3 Cat.11 — épandage N₂O (hors périmètre CBAM)</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--text-muted)">—</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--text-muted)">Exclu · hors CBAM</td></tr>
+            <tr><td style="font-size:11px;font-weight:600;color:var(--text-muted);background:var(--bg-surface);letter-spacing:.05em;text-transform:uppercase;" colspan="5">Indicateurs & exposition réglementaire</td></tr>
+            <tr><td>KPI intensité carbone + benchmark pairs</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--text-muted)">—</td><td style="text-align:center;color:var(--accent)">✓</td><td style="text-align:center;color:var(--accent)"><strong>✓</strong></td></tr>
+            <tr><td>Analyse exposition CBAM chiffrée 2026→2034</td><td style="text-align:center;color:var(--amber)">~</td><td style="text-align:center;color:var(--text-muted)">—</td><td style="text-align:center;color:var(--text-muted)">—</td><td style="text-align:center;color:var(--accent)"><strong>✓ Unique</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="source-note" style="margin-top:12px;">Comparaison établie sur données publiques uniquement : Yara Integrated Report 2024 (yara.com) · PVCFC Sustainability Report 2024 (pvcfc.com.vn) · Fertilizers Europe Carbon Footprint Calculator (DNV-GL verified, 2019) · IFA Measuring and Reporting Fertilizer GHG Emissions (2018). <strong>✓</strong> = couvert · <strong>~</strong> = partiel · <strong>—</strong> = non publié</div>
+        </div><!-- accordion-body -->
+      </details>
+    </div>
+  </div>
+
+  <!-- ══ 01 VUE D'ENSEMBLE ══ -->
+  <div class="section" id="overview">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Vue d'ensemble des émissions</h2>
+      <span class="section-badge sb-red">2 178 400 tCO₂e</span>
+      <span class="section-src-wrap">
+        <span class="section-src-btn">?</span>
+        <span class="section-src-box">IEA Ammonia Technology Roadmap (2021) · c-thru.org Ammonia Technical Brief (2022) · IPCC 2006 Guidelines Vol.3 Ch.3 · EVN Grid Emission Factor 2024 (0,681 tCO₂e/MWh) · Vinachem production data · IPCC 2006 charbon bitumineux (94,6 kgCO₂/GJ)</span>
+      </span>
+    </div>
+
+    <!-- Baseline 2021 -->
+    <p style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:14px;color:var(--text);line-height:1.6;padding-bottom:16px;border-bottom:1px solid var(--divider);margin-bottom:16px;">
+      Baseline 2021 — Année de rénovation de l'installation · Données non auditées · Valeur de référence interne uniquement
+    </p>
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-bar s1"></div>
+        <div class="kpi-scope s1">Scope 1 — Directes</div>
+        <div class="kpi-value s1">1 836 600</div>
+        <div class="kpi-unit">tCO₂e · 84,3 %</div>
+        <div class="kpi-desc">Combustion charbon + émissions process CO₂ + NH₃ fugitives</div>
+        <div class="unc-row">
+          <span class="unc-label">Incertitude</span>
+          <span class="unc-val">± 15–20 %</span>
+          <span class="tip-wrap">
+            <span class="tip-btn">?</span>
+            <span class="tip-box">Dominé par la consommation charbon (1 290 000 t/an) estimée par reconstruction énergétique. L'absence de relevés de livraison terrain et l'hypothèse sur le taux de recyclage CO₂ (59 %) génèrent cette fourchette. Un audit terrain ramènerait à ± 5 %.</span>
+          </span>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-bar s2"></div>
+        <div class="kpi-scope s2">Scope 2 — Électricité</div>
+        <div class="kpi-value s2">43 400</div>
+        <div class="kpi-unit">tCO₂e · 2,0 %</div>
+        <div class="kpi-desc">Facteur réseau EVN 2024 : 0,681 tCO₂e/MWh</div>
+        <div class="unc-row">
+          <span class="unc-label">Incertitude</span>
+          <span class="unc-val">± 5–8 %</span>
+          <span class="tip-wrap">
+            <span class="tip-btn">?</span>
+            <span class="tip-box">Facteur EVN 2024 publié (0,681 tCO₂e/MWh) — fiable. L'incertitude provient de la consommation électrique estimée (63 700 MWh/an reconstituée à partir du débit ASU). Relevés de factures EVN permettraient de descendre à ± 2 %.</span>
+          </span>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-bar s3"></div>
+        <div class="kpi-scope s3">Scope 3 — Chaîne valeur</div>
+        <div class="kpi-value s3">298 400</div>
+        <div class="kpi-unit">tCO₂e · 13,7 %</div>
+        <div class="kpi-desc">Extraction &amp; transport charbon + expédition urée</div>
+        <div class="unc-row">
+          <span class="unc-label">Incertitude</span>
+          <span class="unc-val">± 25–35 %</span>
+          <span class="tip-wrap">
+            <span class="tip-btn">?</span>
+            <span class="tip-box">Cat.1 : facteur Ecoinvent 3.9 varie de 0,09 (surface) à 0,25 tCO₂/t (souterrain) selon le type de mine. Cat.4 : distance estimée à 220 km. Cat.9 : distance pondérée selon marchés d'export supposés. Ces trois paramètres n'ont pas été validés sur le terrain.</span>
+          </span>
+        </div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-bar total"></div>
+        <div class="kpi-scope total">Total S1 + S2 + S3</div>
+        <div class="kpi-value total">2 178 400</div>
+        <div class="kpi-unit">tCO₂e · Année 2024</div>
+        <div class="kpi-desc">≡ émissions de 470 000 voitures européennes/an</div>
+      </div>
+    </div>
+
+    <details class="accordion">
+      <summary>
+        <span>Répartition Scope 1 / 2 / 3 · Décomposition Scope 1 par source</span>
+        <span class="accordion-arrow">▼</span>
+      </summary>
+      <div class="accordion-body">
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-label">Répartition Scope 1 / 2 / 3</div>
+            <div class="chart-h220"><canvas id="chartDonut"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-label">Décomposition Scope 1 par source</div>
+            <div class="chart-h220"><canvas id="chartS1Bar"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ══ 02 PROCÉDÉ ══ -->
+  <div class="section" id="process">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Description du procédé industriel</h2>
+      <span class="section-badge sb-gray">Coal Gasification → Haber-Bosch → Urée</span>
+      <span class="section-src-wrap">
+        <span class="section-src-btn">?</span>
+        <span class="section-src-box">IEA Coal Gasification in Developing Countries (2013) · Vinachem Annual Report · Stoichiométrie Basarov : CO₂ + 2NH₃ → CO(NH₂)₂ + H₂O (ratio 0,733 tCO₂/t urée) · IEA Ammonia Roadmap 2021</span>
+      </span>
+    </div>
+
+    <p style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:14px;color:var(--text);line-height:1.65;margin-bottom:24px;">Procédé Texaco Entrained-Flow Coal Gasification couplé à la synthèse Haber-Bosch pour la production d'ammoniac, puis réaction Basarov (CO₂ + 2 NH₃ → urée) pour la production finale. La CO₂ captée est partiellement recyclée vers l'unité urée (0,733 tCO₂/t urée), mais le bilan net demeure fortement positif en émissions.</p>
+
+    <div style="margin:24px 0;border:1px solid rgba(5,167,100,0.18);border-radius:10px;padding:20px 16px 12px;background:#ffffff;">
+      <svg width="100%" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr-proc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- RAIL -->
+<line x1="30" y1="175" x2="655" y2="175" stroke="#05A764" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.3"/>
+
+<!-- 1. CHARBON -->
+<path d="M40 95 L70 95 L74 145 L36 145 Z" fill="none" stroke="#05A764" stroke-width="1.2" stroke-linejoin="round"/>
+<line x1="34" y1="95" x2="76" y2="95" stroke="#05A764" stroke-width="1.2"/>
+<path d="M36 145 L46 163 L64 163 L74 145" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<line x1="42" y1="110" x2="68" y2="110" stroke="#05A764" stroke-width="0.5" opacity="0.4"/>
+<line x1="40" y1="123" x2="70" y2="123" stroke="#05A764" stroke-width="0.5" opacity="0.4"/>
+<line x1="38" y1="136" x2="72" y2="136" stroke="#05A764" stroke-width="0.5" opacity="0.4"/>
+<line x1="55" y1="163" x2="55" y2="195" stroke="#05A764" stroke-width="0.5" opacity="0.3"/>
+<text x="55" y="206" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="#0A0A0A" font-weight="600">Charbon</text>
+<line x1="64" y1="163" x2="96" y2="163" stroke="#05A764" stroke-width="0.9" marker-end="url(#arr-proc)"/>
+
+<!-- 2. GAZÉIFIEUR -->
+<path d="M107 90 Q130 72 153 90" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<rect x="107" y="90" width="46" height="86" rx="3" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<path d="M107 176 L119 196 L141 196 L153 176" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<rect x="94" y="126" width="13" height="9" rx="2" fill="none" stroke="#05A764" stroke-width="0.8"/>
+<rect x="153" y="126" width="13" height="9" rx="2" fill="none" stroke="#05A764" stroke-width="0.8"/>
+<path d="M117 170 L123 148 L129 170Z" fill="none" stroke="#05A764" stroke-width="0.8" opacity="0.6"/>
+<path d="M124 170 L130 141 L136 170Z" fill="none" stroke="#05A764" stroke-width="0.8" opacity="0.6"/>
+<path d="M131 170 L137 145 L143 170Z" fill="none" stroke="#05A764" stroke-width="0.7" opacity="0.4"/>
+<line x1="130" y1="60" x2="130" y2="72" stroke="#05A764" stroke-width="0.8" marker-end="url(#arr-proc)"/>
+<text x="130" y="56" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#05A764">O₂</text>
+<line x1="130" y1="196" x2="130" y2="210" stroke="#05A764" stroke-width="0.7" marker-end="url(#arr-proc)"/>
+<text x="130" y="222" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8" fill="#888">Scorie</text>
+<line x1="130" y1="90" x2="130" y2="48" stroke="#05A764" stroke-width="0.4" opacity="0.3"/>
+<text x="130" y="36" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="#0A0A0A" font-weight="600">Gazéifieur</text>
+<text x="130" y="48" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#888">Texaco · 1400°C</text>
+<line x1="153" y1="133" x2="188" y2="133" stroke="#05A764" stroke-width="0.9" marker-end="url(#arr-proc)"/>
+<text x="170" y="127" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8" fill="#05A764">Syngas</text>
+
+<!-- 3. WATER-GAS SHIFT -->
+<rect x="190" y="110" width="56" height="50" rx="17" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<line x1="202" y1="121" x2="202" y2="149" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<line x1="218" y1="116" x2="218" y2="154" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<line x1="234" y1="121" x2="234" y2="149" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<line x1="218" y1="96" x2="218" y2="109" stroke="#05A764" stroke-width="0.8" marker-end="url(#arr-proc)"/>
+<text x="218" y="92" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#05A764">H₂O</text>
+<line x1="218" y1="160" x2="218" y2="195" stroke="#05A764" stroke-width="0.4" opacity="0.3"/>
+<text x="218" y="206" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="#0A0A0A" font-weight="600">Water-Gas Shift</text>
+<text x="218" y="218" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#888">CO + H₂O → CO₂ + H₂</text>
+<line x1="246" y1="135" x2="282" y2="135" stroke="#05A764" stroke-width="0.9" marker-end="url(#arr-proc)"/>
+
+<!-- 4. AGRU -->
+<rect x="284" y="86" width="34" height="98" rx="4" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<line x1="286" y1="103" x2="316" y2="103" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<line x1="286" y1="115" x2="316" y2="115" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<line x1="286" y1="127" x2="316" y2="127" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<line x1="286" y1="139" x2="316" y2="139" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<line x1="286" y1="151" x2="316" y2="151" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<line x1="286" y1="163" x2="316" y2="163" stroke="#05A764" stroke-width="0.55" opacity="0.45"/>
+<path d="M318 94 L340 94 L340 64" fill="none" stroke="#05A764" stroke-width="0.8" marker-end="url(#arr-proc)"/>
+<text x="344" y="62" font-family="Instrument Sans,sans-serif" font-size="8" fill="#888">CO₂ → urée</text>
+<line x1="301" y1="86" x2="301" y2="48" stroke="#05A764" stroke-width="0.4" opacity="0.3"/>
+<text x="301" y="36" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="#0A0A0A" font-weight="600">AGRU</text>
+<text x="301" y="48" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#888">Épuration CO₂ / H₂S</text>
+<line x1="318" y1="135" x2="356" y2="135" stroke="#05A764" stroke-width="0.9" marker-end="url(#arr-proc)"/>
+<text x="337" y="129" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8" fill="#05A764">H₂ pur</text>
+
+<!-- 5. HABER-BOSCH -->
+<path d="M358 92 Q396 74 434 92" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<rect x="358" y="92" width="76" height="98" rx="3" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<line x1="360" y1="110" x2="432" y2="110" stroke="#05A764" stroke-width="0.5" opacity="0.35"/>
+<line x1="360" y1="124" x2="432" y2="124" stroke="#05A764" stroke-width="0.5" opacity="0.35"/>
+<line x1="360" y1="138" x2="432" y2="138" stroke="#05A764" stroke-width="0.5" opacity="0.35"/>
+<line x1="360" y1="152" x2="432" y2="152" stroke="#05A764" stroke-width="0.5" opacity="0.35"/>
+<line x1="360" y1="166" x2="432" y2="166" stroke="#05A764" stroke-width="0.5" opacity="0.35"/>
+<line x1="396" y1="60" x2="396" y2="74" stroke="#05A764" stroke-width="0.8" marker-end="url(#arr-proc)"/>
+<text x="396" y="56" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="9" fill="#05A764">N₂</text>
+<path d="M434 131 Q455 131 455 160 Q455 190 434 190 L396 190" fill="none" stroke="#05A764" stroke-width="0.7" stroke-dasharray="3 2" marker-end="url(#arr-proc)"/>
+<text x="460" y="163" font-family="Instrument Sans,sans-serif" font-size="9" fill="#05A764">↻</text>
+<line x1="396" y1="190" x2="396" y2="218" stroke="#05A764" stroke-width="0.4" opacity="0.3"/>
+<text x="396" y="228" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="#0A0A0A" font-weight="600">Synthèse NH₃</text>
+<text x="396" y="240" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#888">Haber-Bosch · 450°C</text>
+<line x1="434" y1="135" x2="470" y2="135" stroke="#05A764" stroke-width="0.9" marker-end="url(#arr-proc)"/>
+<text x="452" y="129" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8" fill="#05A764">NH₃</text>
+
+<!-- 6. RÉACTEUR URÉE -->
+<path d="M472 92 Q506 74 540 92" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<rect x="472" y="92" width="68" height="88" rx="3" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<path d="M472 180 Q506 197 540 180" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<line x1="474" y1="108" x2="538" y2="108" stroke="#05A764" stroke-width="0.5" opacity="0.32"/>
+<line x1="474" y1="122" x2="538" y2="122" stroke="#05A764" stroke-width="0.5" opacity="0.32"/>
+<line x1="474" y1="136" x2="538" y2="136" stroke="#05A764" stroke-width="0.5" opacity="0.32"/>
+<line x1="474" y1="150" x2="538" y2="150" stroke="#05A764" stroke-width="0.5" opacity="0.32"/>
+<line x1="474" y1="164" x2="538" y2="164" stroke="#05A764" stroke-width="0.5" opacity="0.32"/>
+<path d="M340 62 Q420 28 472 105" fill="none" stroke="#05A764" stroke-width="0.7" stroke-dasharray="4 2" marker-end="url(#arr-proc)"/>
+<line x1="506" y1="92" x2="506" y2="48" stroke="#05A764" stroke-width="0.4" opacity="0.3"/>
+<text x="506" y="36" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="#0A0A0A" font-weight="600">Réacteur urée</text>
+<text x="506" y="48" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#888">Basarov · 180°C</text>
+<line x1="540" y1="135" x2="574" y2="135" stroke="#05A764" stroke-width="0.9" marker-end="url(#arr-proc)"/>
+
+<!-- 7. GRANULATION -->
+<rect x="576" y="82" width="36" height="116" rx="3" fill="none" stroke="#05A764" stroke-width="1.2"/>
+<path d="M586 82 L586 70 L602 70 L602 82" fill="none" stroke="#05A764" stroke-width="0.8"/>
+<circle cx="585" cy="96"  r="1.4" fill="#05A764" opacity="0.65"/>
+<circle cx="594" cy="110" r="1.4" fill="#05A764" opacity="0.65"/>
+<circle cx="603" cy="124" r="1.4" fill="#05A764" opacity="0.65"/>
+<circle cx="586" cy="138" r="1.4" fill="#05A764" opacity="0.55"/>
+<circle cx="596" cy="152" r="1.4" fill="#05A764" opacity="0.55"/>
+<circle cx="587" cy="166" r="1.4" fill="#05A764" opacity="0.45"/>
+<rect x="574" y="198" width="48" height="7" rx="3" fill="none" stroke="#05A764" stroke-width="0.8"/>
+<line x1="585" y1="202" x2="611" y2="202" stroke="#05A764" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.4"/>
+<line x1="598" y1="205" x2="598" y2="218" stroke="#05A764" stroke-width="0.4" opacity="0.3"/>
+<text x="598" y="228" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="#0A0A0A" font-weight="600">Granulation</text>
+<text x="598" y="240" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="8.5" fill="#888">Prilling tower</text>
+
+<!-- OUTPUT sac -->
+<line x1="612" y1="202" x2="640" y2="202" stroke="#05A764" stroke-width="0.9" marker-end="url(#arr-proc)"/>
+<path d="M643 186 L643 218 L659 218 L659 186 Z" fill="none" stroke="#05A764" stroke-width="1.1"/>
+<path d="M648 186 Q651 178 654 186" fill="none" stroke="#05A764" stroke-width="0.8"/>
+<text x="651" y="232" text-anchor="middle" font-family="Instrument Sans,sans-serif" font-size="10" fill="#0A0A0A" font-weight="600">Urée</text>
+</svg>
+    </div>
+
+    <div class="process-flow">
+      <div class="proc-step">
+        <div class="proc-name">Charbon bitumineux</div>
+        <div class="proc-detail">1 290 000 t/an</div>
+      </div>
+      <div class="proc-step">
+        <div class="proc-name">Gazéification CGU</div>
+        <div class="proc-detail">Texaco entrained-flow</div>
+        <div class="proc-emission">+1 410 000 tCO₂e</div>
+      </div>
+      <div class="proc-step">
+        <div class="proc-name">Water-Gas Shift</div>
+        <div class="proc-detail">CO + H₂O → CO₂ + H₂</div>
+      </div>
+      <div class="proc-step">
+        <div class="proc-name">Épuration acide</div>
+        <div class="proc-detail">CO₂ séparé → urée</div>
+      </div>
+      <div class="proc-step">
+        <div class="proc-name">Synthèse NH₃</div>
+        <div class="proc-detail">Haber-Bosch</div>
+        <div class="proc-detail">~364 000 t/an</div>
+      </div>
+      <div class="proc-step">
+        <div class="proc-name">Synthèse urée</div>
+        <div class="proc-detail">Basarov · CO(NH₂)₂</div>
+        <div class="proc-detail">560 000 t/an</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="info-card">
+        <div class="card-label">Paramètres énergétiques clés</div>
+        <div class="info-row"><span class="k">Consommation charbon</span><span class="v">1 290 000 t/an</span></div>
+        <div class="info-row"><span class="k">Intensité énergétique NH₃</span><span class="v">~46 GJ/tNH₃</span></div>
+        <div class="info-row"><span class="k">Électricité achetée EVN</span><span class="v">63 700 MWh/an</span></div>
+        <div class="info-row"><span class="k">Production NH₃ intermédiaire</span><span class="v">~364 000 t/an</span></div>
+        <div class="info-row"><span class="k">CO₂ recyclé vers urée</span><span class="v">~410 600 t/an</span></div>
+        <div class="info-row"><span class="k">Eau de procédé</span><span class="v">~4 200 000 m³/an</span></div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">Limites organisationnelles GHG Protocol</div>
+        <div class="info-row"><span class="k">Consolidation</span><span class="v">Contrôle opérationnel</span></div>
+        <div class="info-row"><span class="k">Scope 2 — méthode</span><span class="v">Location-based (EVN)</span></div>
+        <div class="info-row"><span class="k">Scope 3 catégories</span><span class="v">Cat. 1, 4 · Cat. 9</span></div>
+        <div class="info-row"><span class="k">Gaz inventoriés</span><span class="v">CO₂, CH₄, N₂O (AR6)</span></div>
+        <div class="info-row"><span class="k">Seuil de matérialité</span><span class="v">&gt; 1 % du total</span></div>
+        <div class="info-row"><span class="k">Année de référence</span><span class="v">2024</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 03 SCOPE 1 ══ -->
+  <div class="section" id="scope1">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Scope 1 — Émissions directes</h2>
+      <span class="section-badge sb-red">1 836 600 tCO₂e · 84,3 %</span>
+      <span class="section-src-wrap">
+        <span class="section-src-btn">?</span>
+        <span class="section-src-box">Intensité charbon : 94,6 kgCO₂/GJ (IPCC 2006, Vol.2, Tab.2.2) · Intensité NH₃ coal gasif. : ~46 GJ/tNH₃ (IEA Ammonia Tech Roadmap 2021) · CO₂ process : 4,6 tCO₂/tNH₃ (c-thru.org 2022) · Production NH₃ : ~364 000 t/an (ratio 0,57 tNH₃/t urée) · GWP N₂O = 273 (IPCC AR6, 2021)</span>
+      </span>
+    </div>
+
+    <p style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:14px;color:var(--text);line-height:1.65;margin-bottom:24px;">Le Scope 1 est dominé à 76,8 % par les émissions process de la gazéification du charbon. C'est la source principale du désavantage compétitif CBAM : +2,1 tCO₂e/t urée vs. un producteur européen au gaz naturel.</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Source d'émission</th>
+            <th>Catégorie</th>
+            <th>Activité</th>
+            <th>Facteur d'émission</th>
+            <th class="right">tCO₂e/an</th>
+            <th class="right">% S1</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Gazéification charbon (procédé)</strong><div class="sub-text">Oxydation partielle C + O₂ → CO₂</div></td>
+            <td><span class="pill p-s1">S1 Process</span></td>
+            <td class="mono">1 290 000 t charbon</td>
+            <td class="mono">94,6 kgCO₂/GJ<div class="src-text">IPCC 2006 Vol.2</div></td>
+            <td class="right mono"><strong>1 410 000</strong></td>
+            <td class="right mono">76,8 %</td>
+          </tr>
+          <tr>
+            <td><strong>Combustion charbon (énergie)</strong><div class="sub-text">Chaleur gazéification, distillation, utilities</div></td>
+            <td><span class="pill p-s1">S1 Stationnaire</span></td>
+            <td class="mono">~2 950 000 GJ/an</td>
+            <td class="mono">94,6 kgCO₂/GJ<div class="src-text">IPCC 2006</div></td>
+            <td class="right mono"><strong>279 000</strong></td>
+            <td class="right mono">15,2 %</td>
+          </tr>
+          <tr>
+            <td><strong>Torchères &amp; purges CO₂</strong><div class="sub-text">CO₂ excédentaire non recyclé</div></td>
+            <td><span class="pill p-s1">S1 Process</span></td>
+            <td class="mono">CO₂ excédentaire</td>
+            <td class="mono">100 % CO₂<div class="src-text">Stoichiométrie</div></td>
+            <td class="right mono"><strong>112 000</strong></td>
+            <td class="right mono">6,1 %</td>
+          </tr>
+          <tr>
+            <td><strong>Émissions fugitives NH₃</strong><div class="sub-text">Fuites vannes, joints, purges → N₂O CO₂e</div></td>
+            <td><span class="pill p-s1">S1 Fugitives</span></td>
+            <td class="mono">~1 820 t NH₃</td>
+            <td class="mono">GWP N₂O 273<div class="src-text">AR6 IPCC 2021</div></td>
+            <td class="right mono"><strong>28 600</strong></td>
+            <td class="right mono">1,6 %</td>
+          </tr>
+          <tr>
+            <td><strong>Véhicules &amp; engins site</strong><div class="sub-text">Chariots, engins, maintenance</div></td>
+            <td><span class="pill p-s1">S1 Mobile</span></td>
+            <td class="mono">~280 000 L diesel</td>
+            <td class="mono">2,68 kgCO₂/L<div class="src-text">IPCC 2006</div></td>
+            <td class="right mono"><strong>7 000</strong></td>
+            <td class="right mono">0,4 %</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="4"><strong>Total Scope 1</strong></td>
+            <td class="right mono v-red"><strong>1 836 600</strong></td>
+            <td class="right mono">100 %</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="accordion">
+      <summary>
+        <span>Décomposition Scope 1 · Profil mensuel estimé</span>
+        <span class="accordion-arrow">▼</span>
+      </summary>
+      <div class="accordion-body">
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-label">Décomposition Scope 1</div>
+            <div class="chart-h260"><canvas id="chartS1Pie"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-label">Profil mensuel estimé — 2024</div>
+            <div class="chart-h260"><canvas id="chartS1Monthly"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- ══ 04 SCOPE 2 ══ -->
+  <div class="section" id="scope2">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Scope 2 — Électricité achetée</h2>
+      <span class="section-badge sb-amber">43 400 tCO₂e · 2,0 %</span>
+      <span class="section-src-wrap">
+        <span class="section-src-btn">?</span>
+        <span class="section-src-box">EVN Grid Emission Factor 2024 : 0,681 tCO₂e/MWh (Hanoï University of Science & Technology / Ministry of Agriculture & Environment, mars 2025) · ASU : ~0,78 kWh/Nm³ O₂, débit O₂ ≈ 36 000 Nm³/h, factor load 80 %</span>
+      </span>
+    </div>
+
+    <p style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:14px;color:var(--text);line-height:1.65;margin-bottom:24px;">La quasi-totalité de la vapeur process est autoproduite par récupération de chaleur de la gazéification. L'électricité achetée ne représente que 2 % des émissions. Le facteur EVN 2024 (0,681 tCO₂e/MWh) reflète la montée du charbon à 49,5 % du mix électrique vietnamien.</p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Poste de consommation</th>
+            <th>Méthode</th>
+            <th class="right">MWh/an</th>
+            <th>Facteur émission</th>
+            <th class="right">tCO₂e</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Séparation d'air (ASU)</strong><div class="sub-text">Production O₂ pour gazéifieur Texaco</div></td>
+            <td><span class="pill p-s2">Location-based</span></td>
+            <td class="right mono">28 400</td>
+            <td class="mono">0,681 tCO₂/MWh<div class="src-text">EVN Vietnam 2024</div></td>
+            <td class="right mono"><strong>19 340</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Compresseurs &amp; pompes process</strong><div class="sub-text">Haber-Bosch HPC, eau, CO₂</div></td>
+            <td><span class="pill p-s2">Location-based</span></td>
+            <td class="right mono">18 400</td>
+            <td class="mono">0,681 tCO₂/MWh</td>
+            <td class="right mono"><strong>12 530</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Bâtiments, éclairage, HVAC</strong><div class="sub-text">Bureaux, laboratoire, contrôle</div></td>
+            <td><span class="pill p-s2">Location-based</span></td>
+            <td class="right mono">11 400</td>
+            <td class="mono">0,681 tCO₂/MWh</td>
+            <td class="right mono"><strong>7 760</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Traitement eau &amp; effluents</strong></td>
+            <td><span class="pill p-s2">Location-based</span></td>
+            <td class="right mono">5 500</td>
+            <td class="mono">0,681 tCO₂/MWh</td>
+            <td class="right mono"><strong>3 750</strong></td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="2"><strong>Total Scope 2</strong></td>
+            <td class="right mono"><strong>63 700 MWh</strong></td>
+            <td></td>
+            <td class="right mono v-amber"><strong>43 380</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box">La quasi-totalité de la vapeur process est autoproduite par récupération de chaleur de la gazéification. L'électricité achetée ne représente que 2 % des émissions. Le facteur EVN 2024 (0,681 tCO₂e/MWh) reflète la montée du charbon à 49,5 % du mix électrique vietnamien.</div>
+    <div class="source-note" style="display:none;">EVN Grid Emission Factor 2024 : 0,681 tCO₂e/MWh (Hanoï University of Science &amp; Technology / Ministry of Agriculture &amp; Environment, mars 2025) · ASU : ~0,78 kWh/Nm³ O₂, débit O₂ ≈ 36 000 Nm³/h, factor load 80 %</div>
+  </div>
+
+  <!-- ══ 05 SCOPE 3 ══ -->
+  <div class="section" id="scope3">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Scope 3 — Chaîne de valeur</h2>
+      <span class="section-badge sb-blue">298 400 tCO₂e · 13,7 %</span>
+      <span class="section-src-wrap">
+        <span class="section-src-btn">?</span>
+        <span class="section-src-box">Cat.1 extraction : 0,18 tCO₂/t charbon (Ecoinvent 3.9, CH₄ mines × GWP100 AR6=29,8) · Cat.4 rail Vietnam : 0,096 gCO₂/tkm (GHG Protocol Transport Tool) · Cat.9 maritime cargo vrac : 0,020 gCO₂/tkm (IMO GHG Study 2020)</span>
+      </span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Catégorie GHG Protocol</th>
+            <th>Description</th>
+            <th>Méthode de calcul</th>
+            <th class="right">tCO₂e/an</th>
+            <th class="right">% S3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill p-s3">Cat. 1</span> <strong>Biens &amp; services achetés</strong></td>
+            <td>Extraction + préparation charbon amont (mines Vietnam &amp; import)</td>
+            <td class="mono">1 290 000 t × 0,18 tCO₂/t<div class="src-text">Ecoinvent 3.9 coal mining</div></td>
+            <td class="right mono"><strong>232 200</strong></td>
+            <td class="right mono">77,8 %</td>
+          </tr>
+          <tr>
+            <td><span class="pill p-s3">Cat. 4</span> <strong>Transport amont</strong></td>
+            <td>Charbon mine → site Ninh Binh (rail + camion ~220 km)</td>
+            <td class="mono">1 290 000 t × 220 km × 0,096 g<div class="src-text">GHG Protocol Transport</div></td>
+            <td class="right mono"><strong>27 200</strong></td>
+            <td class="right mono">9,1 %</td>
+          </tr>
+          <tr>
+            <td><span class="pill p-s3">Cat. 9</span> <strong>Transport aval</strong></td>
+            <td>Expédition urée (Cambodge, Corée, Indonésie, EU) ~3 500 km</td>
+            <td class="mono">560 000 t × 3 500 km × 0,020 g<div class="src-text">IMO GHG Study 2020</div></td>
+            <td class="right mono"><strong>39 200</strong></td>
+            <td class="right mono">13,1 %</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="3"><strong>Total Scope 3</strong></td>
+            <td class="right mono v-blue"><strong>298 600</strong></td>
+            <td class="right mono">100 %</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-label">Répartition Scope 3 par catégorie</div>
+      <div class="chart-h220"><canvas id="chartS3"></canvas></div>
+    </div>
+    <div class="source-note" style="display:none;">Cat.1 extraction : 0,18 tCO₂/t charbon (Ecoinvent 3.9, CH₄ mines × GWP100 AR6=29,8) · Cat.4 rail Vietnam : 0,096 gCO₂/tkm · Cat.9 maritime cargo vrac : 0,020 gCO₂/tkm (IMO GHG Study 2020)</div>
+  </div>
+
+  <!-- ══ 06 INTENSITE ══ -->
+  <div class="section" id="intensite">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Intensité carbone &amp; benchmark sectoriel</h2>
+      <span class="section-src-wrap">
+        <span class="section-src-btn">?</span>
+        <span class="section-src-box">IEA Ammonia Technology Roadmap 2021 · c-thru.org Ammonia Technical Brief 2022 · Fertilizers Europe Carbon Footprint Regional Reference Values 2019 · PMC/Nature Low-carbon Ammonia 2024</span>
+      </span>
+    </div>
+
+    <div class="two-col" style="margin-bottom:20px;">
+      <div class="info-card">
+        <div class="card-label">Intensité par tonne d'urée produite</div>
+        <div class="info-row"><span class="k">Scope 1 seul</span><span class="v v-red">3,28 tCO₂e/t urée</span></div>
+        <div class="info-row"><span class="k">Scope 1 + 2 (périmètre CBAM)</span><span class="v v-red">3,36 tCO₂e/t urée</span></div>
+        <div class="info-row"><span class="k">Scope 1 + 2 + 3</span><span class="v v-red">3,89 tCO₂e/t urée</span></div>
+        <div class="info-row"><span class="k">Intensité par tonne N (46 % N)</span><span class="v v-red">7,30 tCO₂e/tN</span></div>
+        <div class="info-row"><span class="k">Émissions par employé</span><span class="v">1 748 tCO₂e/ETP</span></div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">Tendance annuelle — Émissions totales</div>
+        <div class="chart-h180"><canvas id="chartTrend"></canvas></div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="card-label">Benchmark sectoriel — Intensité Scope 1+2 (tCO₂e/t urée produite)</div>
+      <div style="margin-top:8px;">
+        <div class="bench-row">
+          <span class="bench-label"><strong style="color:var(--red)">⚑ Ninh Binh (charbon · Texaco)</strong></span>
+          <div class="bench-track"><div class="bench-fill" style="width:100%;background:var(--red)"></div></div>
+          <span class="bench-val" style="color:var(--red)">3,36 t</span>
+        </div>
+        <div class="bench-row">
+          <span class="bench-label">Chine moy. (coal gasification)</span>
+          <div class="bench-track"><div class="bench-fill" style="width:92%;background:rgba(184,64,48,0.4)"></div></div>
+          <span class="bench-val" style="color:var(--text-muted)">~3,10 t</span>
+        </div>
+        <div class="bench-row">
+          <span class="bench-label">Asie du Sud-Est (gaz naturel)</span>
+          <div class="bench-track"><div class="bench-fill" style="width:62%;background:var(--amber)"></div></div>
+          <span class="bench-val" style="color:var(--amber)">~2,10 t</span>
+        </div>
+        <div class="bench-row">
+          <span class="bench-label">Moyen-Orient (gaz, efficace)</span>
+          <div class="bench-track"><div class="bench-fill" style="width:49%;background:rgba(140,98,0,0.5)"></div></div>
+          <span class="bench-val" style="color:var(--text-muted)">~1,65 t</span>
+        </div>
+        <div class="bench-row">
+          <span class="bench-label">Europe (gaz, best practice)</span>
+          <div class="bench-track"><div class="bench-fill" style="width:42%;background:var(--blue)"></div></div>
+          <span class="bench-val" style="color:var(--blue)">~1,40 t</span>
+        </div>
+        <div class="bench-row">
+          <span class="bench-label"><strong style="color:var(--accent)">Ammoniac vert (électrolyse)</strong></span>
+          <div class="bench-track"><div class="bench-fill" style="width:6%;background:var(--accent)"></div></div>
+          <span class="bench-val" style="color:var(--accent)">~0,20 t</span>
+        </div>
+      </div>
+      <div class="source-note" style="display:none;margin-top:14px;">IEA Ammonia Technology Roadmap 2021 · c-thru.org Ammonia Technical Brief 2022 · Fertilizers Europe Carbon Footprint Regional Reference Values 2019 · PMC/Nature Low-carbon Ammonia 2024</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ 07 CBAM ══ -->
+  <div class="section" id="cbam">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2 class="section-title">Demande réduction client &amp; exposition CBAM</h2>
+      <span class="section-badge sb-red">Règlement UE 2023/956 · Définitif 2026</span>
+      <span class="section-src-wrap">
+        <span class="section-src-btn">?</span>
+        <span class="section-src-box">Prix ETS CBAM : $81/tCO₂e (≈€75) (2026) · $97/tCO₂e (≈€90) (2030) · $92/tCO₂e (≈€85) (2034) · Taux : 1$ = 0,93€ · Facteur CBAM phase-in : Règlement UE 2025/2083 (oct. 2025) · Volume export EU : 80 000 t/an (Indexbox 2024)</span>
+      </span>
+    </div>
+
+    <p style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:14px;color:var(--text);line-height:1.65;margin-bottom:24px;">L'importateur EU autorisé CBAM exige un bilan carbone conforme ISO 14064-1 et GHG Protocol, établi par auditeur tiers, avant fin T1 2027 — sous peine de résiliation du contrat de 80 000 t/an d'urée. Objectif de réduction client : 3,36 → 2,20 tCO₂e/t urée d'ici 2030 (−35 %) · seuil de viabilité de l'export EU</p>
+
+    <div class="cbam-exposure">
+      <div class="exp-card">
+        <div class="exp-year">2026 — Facteur 2,5 %</div>
+        <div class="exp-cost">~$ 619 000</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €573 000 · 1$ = 0,93€</div>
+        <div class="exp-detail">80 kt export EU × 3,36 tCO₂e/t × $81 × 2,5 %</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-year">2030 — Facteur 51,5 %</div>
+        <div class="exp-cost">~$ 12,7 M</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €11,8 M · 1$ = 0,93€</div>
+        <div class="exp-detail">80 kt × 3,36 t × $97 × 51,5 %</div>
+      </div>
+      <div class="exp-card">
+        <div class="exp-year">2034 — Facteur 100 %</div>
+        <div class="exp-cost">~$ 24,6 M</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €22,8 M · 1$ = 0,93€</div>
+        <div class="exp-detail">80 kt × 3,36 t × $92 · plein tarif</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:20px;">
+      <div class="info-card">
+        <div class="card-label">Chronologie réglementaire</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-dot" style="color:var(--accent);background:var(--accent)"></div>
+            <div class="tl-date">Oct. 2023 → Déc. 2025</div>
+            <div class="tl-title">Phase transitoire — Reporting seul</div>
+            <div class="tl-desc">Déclarations trimestrielles. Pas de paiement.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="color:var(--red);background:var(--red)"></div>
+            <div class="tl-date">1 jan. 2026</div>
+            <div class="tl-title">Phase définitive — Données vérifiées obligatoires</div>
+            <div class="tl-desc">Données installation-spécifiques + vérification tierce accréditée. Valeurs par défaut limitées à 20 % max.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="color:var(--amber);background:var(--amber)"></div>
+            <div class="tl-date">Fin T1 2027</div>
+            <div class="tl-title">Échéance AgriChem GmbH</div>
+            <div class="tl-desc">Audit ISO 14064-1 requis · résiliation contrat 80 000 t/an si non conforme.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="color:var(--amber);background:var(--amber)"></div>
+            <div class="tl-date">1 fév. 2027</div>
+            <div class="tl-title">Premier achat de certificats CBAM</div>
+            <div class="tl-desc">Prix = moyenne trimestrielle ETS Q1-Q4 2026. Déclaration annuelle due au 30 sept. 2027.</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="color:var(--divider-strong);background:var(--bg-deep)"></div>
+            <div class="tl-date">2026 → 2034</div>
+            <div class="tl-title">Montée en charge progressive</div>
+            <div class="tl-desc">2,5 % → 5 % → 10 % → 51,5 % (2030) → 100 % (2034).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-label">Demande de réduction — AgriChem GmbH (Hambourg)</div>
+        <div class="info-row"><span class="k">Réduction cible 2030</span><span class="v v-red">−648 900 tCO₂e</span></div>
+        <div class="info-row"><span class="k">Économie CBAM si objectif atteint</span><span class="v v-green">~$ 5,2 M/an <span style="font-family:'JetBrains Mono',monospace;font-weight:300;font-size:10px;color:var(--text-muted);">(≈ €4,8 M)</span></span></div>
+        <div class="info-row"><span class="k">Piste principale</span><span class="v">Substitution charbon → gaz naturel</span></div>
+        <div class="info-row"><span class="k">Piste complémentaire</span><span class="v">Solaire toiture (Scope 2)</span></div>
+        <div class="info-row"><span class="k">Horizon long terme</span><span class="v">CCS gazéifieur + NH₃ vert</span></div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-label">Projection coût CBAM 2026–2034 · Scénario actuel vs. réduction −35 %</div>
+      <div class="chart-h260"><canvas id="chartCBAM"></canvas></div>
+    </div>
+    <div class="source-note" style="display:none;">Prix ETS CBAM : $81/tCO₂e (≈€75) (2026) · $97/tCO₂e (≈€90) (2030) · $92/tCO₂e (≈€85) (2034) · Taux : 1$ = 0,93€ · Facteur CBAM phase-in : Règlement UE 2025/2083 (oct. 2025) · Volume export EU : 80 000 t/an (Indexbox 2024)</div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-wordmark">Carbon Hunter</div>
+    <p>Ninh Binh Fertilizer &amp; Chemical Co. — Bilan Carbone 2024 — Document de démonstration</p>
+    <p>GHG Protocol Corporate Standard · ISO 14064-1:2018 · CBAM Règlement UE 2023/956</p>
+  </div>
+  <div>
+    <p style="text-align:right;">Données simulées à partir de benchmarks sectoriels validés</p>
+    <p style="text-align:right;">IEA · IPCC 2006 · Fertilizers Europe · c-thru.org · EVN · IMO GHG Study 2020</p>
+  </div>
+</footer>
+
+<script>
+const RED = '#B84030', AMBER = '#8C6200', BLUE = '#1856A0', GREEN = '#05A764';
+const MUTED = 'rgba(10,10,10,0.3)', BORDER = 'rgba(0,0,0,0.07)';
+
+Chart.defaults.color = 'rgba(10,10,10,0.42)';
+Chart.defaults.borderColor = BORDER;
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
+Chart.defaults.font.size = 10;
+Chart.defaults.font.weight = '300';
+
+// ── DONUT ──
+new Chart(document.getElementById('chartDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Scope 1 — Directes','Scope 2 — Électricité','Scope 3 — Chaîne valeur'],
+    datasets: [{ data: [1836600, 43400, 298400], backgroundColor: [RED, AMBER, BLUE], borderColor: '#fff', borderWidth: 3, hoverOffset: 5 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '62%',
+    plugins: {
+      legend: { position: 'right', labels: { boxWidth: 10, padding: 14, color: 'rgba(10,10,10,0.5)' } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.toLocaleString('fr-FR')} tCO₂e (${(ctx.parsed/2178400*100).toFixed(1)}%)` } }
+    }
+  }
+});
+
+// ── S1 BAR ──
+new Chart(document.getElementById('chartS1Bar'), {
+  type: 'bar',
+  data: {
+    labels: ['Gazéification','Combustion','Torchères','Fugitives','Véhicules'],
+    datasets: [{ data: [1410000,279000,112000,28600,7000], backgroundColor: [RED,'rgba(184,64,48,0.65)','rgba(184,64,48,0.45)','rgba(184,64,48,0.3)','rgba(184,64,48,0.15)'], borderRadius: 3, borderSkipped: false }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x.toLocaleString('fr-FR')} tCO₂e` } } },
+    scales: {
+      x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'k':v } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ── S1 PIE ──
+new Chart(document.getElementById('chartS1Pie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Gazéification (process)','Combustion énergie','Torchères CO₂','Fugitives NH₃','Véhicules'],
+    datasets: [{ data: [1410000,279000,112000,28600,7000], backgroundColor: [RED,'rgba(184,64,48,0.65)','rgba(184,64,48,0.45)','rgba(184,64,48,0.3)','rgba(184,64,48,0.15)'], borderColor: '#fff', borderWidth: 2 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, cutout: '52%',
+    plugins: { legend: { position: 'right', labels: { boxWidth: 10, padding: 10, color: 'rgba(10,10,10,0.5)' } } }
+  }
+});
+
+// ── S1 MONTHLY ──
+const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+const base = 1836600/12;
+const vars = [0.98,0.99,1.01,1.02,1.03,1.02,0.99,0.98,1.00,1.01,1.00,0.97];
+new Chart(document.getElementById('chartS1Monthly'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [{ label: 'tCO₂e', data: vars.map(x => Math.round(base*x)), backgroundColor: 'rgba(184,64,48,0.12)', borderColor: RED, borderWidth: 1.5, borderRadius: 3 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => (v/1000).toFixed(0)+'k' } }, x: { grid: { display: false } } }
+  }
+});
+
+// ── S3 ──
+new Chart(document.getElementById('chartS3'), {
+  type: 'bar',
+  data: {
+    labels: ['Cat.1 — Extraction charbon','Cat.9 — Transport aval urée','Cat.4 — Transport amont'],
+    datasets: [{ data: [232200,39200,27200], backgroundColor: [BLUE,'rgba(24,86,160,0.55)','rgba(24,86,160,0.3)'], borderRadius: 3, borderSkipped: false }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x.toLocaleString('fr-FR')} tCO₂e` } } },
+    scales: { x: { grid: { color: 'rgba(0,0,0,0.05)' } }, y: { grid: { display: false } } }
+  }
+});
+
+// ── TREND ──
+new Chart(document.getElementById('chartTrend'), {
+  type: 'line',
+  data: {
+    labels: ['2021','2022','2023','2024'],
+    datasets: [{
+      label: 'Émissions totales',
+      data: [2090000,2135000,2162000,2178400],
+      borderColor: RED, backgroundColor: 'rgba(184,64,48,0.05)', fill: true,
+      tension: 0.35, pointRadius: 4, pointBackgroundColor: '#fff', pointBorderColor: RED, pointBorderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => (v/1e6).toFixed(2)+'M' } }, x: { grid: { display: false } } }
+  }
+});
+
+// ── CBAM ──
+const years = ['2026','2027','2028','2029','2030','2031','2032','2033','2034'];
+const factors = [0.025,0.05,0.10,0.25,0.515,0.65,0.80,0.90,1.00];
+const prices = [75,78,80,84,90,92,88,86,85];
+const baseEmb = 80000*3.36;
+const reducEmb = [80000*3.36,80000*3.20,80000*3.00,80000*2.70,80000*2.20,80000*2.10,80000*2.00,80000*1.90,80000*1.80];
+const cbBase  = factors.map((f,i) => Math.round(baseEmb*prices[i]*f/1000));
+const cbReduc = factors.map((f,i) => Math.round(reducEmb[i]*prices[i]*f/1000));
+
+new Chart(document.getElementById('chartCBAM'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Scénario actuel (k$ / ÷1,08 = k€)', data: cbBase, borderColor: RED, backgroundColor: 'rgba(184,64,48,0.05)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#fff', pointBorderColor: RED, pointBorderWidth: 2 },
+      { label: 'Scénario réduction −35% (k$)', data: cbReduc, borderColor: GREEN, backgroundColor: 'rgba(5,167,100,0.05)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#fff', pointBorderColor: GREEN, pointBorderWidth: 2, borderDash: [6,4] }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { boxWidth: 12, padding: 18, color: 'rgba(10,10,10,0.5)' } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label.split('(')[0].trim()} : $${ctx.parsed.y.toLocaleString('fr-FR')} k` } }
+    },
+    scales: {
+      y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => '$'+(v>=1000?(v/1000).toFixed(1)+'M':v+'k') } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ── VERTICAL RAIL HIGHLIGHT ──
+const sections = document.querySelectorAll('.section');
+const railLinks = document.querySelectorAll('.v-rail a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; });
+  railLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+cur));
+}, { passive: true });
+</script>
+</body>
+</html>

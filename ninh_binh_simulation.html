@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulation — Ninh Binh Fertilizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/files/jetbrains-mono-latin-300-normal.woff2') format('woff2');
+  font-weight: 300; font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/files/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+  font-weight: 400; font-display: swap;
+}
+
+:root {
+  --bg: #FFFFFF;
+  --bg-surface: #F7F7F5;
+  --bg-deep: #EFEFEB;
+  --text: #0A0A0A;
+  --text-secondary: rgba(10,10,10,0.52);
+  --text-muted: rgba(10,10,10,0.35);
+  --accent: #05A764;
+  --accent-soft: rgba(5,167,100,0.08);
+  --accent-border: rgba(5,167,100,0.25);
+  --divider: rgba(0,0,0,0.08);
+  --divider-strong: rgba(0,0,0,0.13);
+  --red: #B84030;
+  --red-soft: rgba(184,64,48,0.07);
+  --red-border: rgba(184,64,48,0.18);
+  --amber: #8C6200;
+  --amber-soft: rgba(140,98,0,0.07);
+  --amber-border: rgba(140,98,0,0.18);
+  --blue: #1856A0;
+  --blue-soft: rgba(24,86,160,0.07);
+  --blue-border: rgba(24,86,160,0.18);
+  --green2: #0D7A4A;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; }
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 128px; opacity: 0.018; pointer-events: none; z-index: 9999;
+}
+body { font-family: 'Instrument Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(255,255,255,0.93); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--divider);
+  padding: 0 48px; display: flex; align-items: center; justify-content: space-between; height: 56px;
+}
+.nav-wordmark { font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); white-space: nowrap; }
+.nav-right { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); flex-shrink: 0; }
+.nav-bilan-link {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--text-secondary); background: var(--bg-surface);
+  border: 1px solid var(--divider-strong);
+  padding: 5px 14px; border-radius: 100px;
+  text-decoration: none; white-space: nowrap; transition: background .15s;
+}
+.nav-bilan-link:hover { background: var(--bg-deep); }
+
+/* ── VERTICAL RAIL ── */
+.v-rail {
+  position: fixed; right: 18px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+}
+.v-rail a {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; cursor: pointer; padding: 3px 0;
+}
+.v-rail-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text-muted); opacity: 0; transform: translateX(6px);
+  transition: opacity .2s, transform .2s; white-space: nowrap; pointer-events: none;
+}
+.v-rail a:hover .v-rail-label,
+.v-rail a.active .v-rail-label { opacity: 1; transform: translateX(0); }
+.v-rail a.active .v-rail-label { color: var(--accent); }
+.v-rail-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--divider-strong); flex-shrink: 0;
+  transition: background .2s, transform .2s;
+}
+.v-rail a:hover .v-rail-dot { background: var(--text-muted); transform: scale(1.3); }
+.v-rail a.active .v-rail-dot { background: var(--accent); transform: scale(1.4); }
+@media (max-width: 900px) { .v-rail { display: none; } }
+
+/* ── DEMO BANNER ── */
+.demo-banner {
+  background: #0A0A0A; color: #fff;
+  padding: 14px 48px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.demo-pill { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; background: var(--accent); color: #fff; padding: 3px 10px; border-radius: 100px; flex-shrink: 0; }
+.demo-title { font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 600; display: block; margin-bottom: 3px; }
+.demo-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; color: rgba(255,255,255,0.5); letter-spacing: 0.3px; }
+
+/* ── HERO ── */
+.sim-hero {
+  padding: 48px 48px 36px;
+  border-bottom: 1px solid var(--divider);
+  background: linear-gradient(135deg, #fff 60%, rgba(5,167,100,0.03) 100%);
+}
+.sim-hero-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.sim-hero h1 { font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 32px; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 8px; }
+.sim-hero h1 em { font-style: normal; color: var(--accent); }
+.sim-hero p { font-size: 13px; color: var(--text-secondary); max-width: 640px; line-height: 1.75; }
+
+/* ── LAYOUT ── */
+.sim-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 0;
+  min-height: calc(100vh - 56px - 52px - 120px);
+}
+@media (max-width: 1000px) { .sim-layout { grid-template-columns: 1fr; } }
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  border-right: 1px solid var(--divider);
+  background: var(--bg-surface);
+  padding: 28px 24px;
+  overflow-y: auto;
+}
+.panel-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1.8px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--divider); }
+.action-group { margin-bottom: 24px; }
+.group-title { font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.group-badge { font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 300; letter-spacing: .8px; padding: 2px 8px; border-radius: 100px; }
+.gb-fast { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-border); }
+.gb-mid { background: var(--amber-soft); color: var(--amber); border: 1px solid var(--amber-border); }
+.gb-long { background: var(--blue-soft); color: var(--blue); border: 1px solid var(--blue-border); }
+
+/* ── ACTION CARD ── */
+.action-card {
+  background: var(--bg);
+  border: 1.5px solid var(--divider);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  position: relative;
+}
+.action-card:hover { border-color: var(--divider-strong); }
+.action-card.checked { border-color: var(--accent); background: rgba(5,167,100,0.04); }
+.action-card input[type=checkbox] { position: absolute; top: 14px; right: 14px; width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; pointer-events: all; }
+.action-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; padding-right: 24px; line-height: 1.35; }
+.action-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px; }
+.action-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: .5px; color: var(--text-muted); }
+.action-tag.red { color: var(--red); }
+.action-tag.green { color: var(--accent); }
+
+/* ── CARBON PROJECT CARD ── */
+.carbon-project {
+  background: var(--bg);
+  border: 1.5px solid var(--divider);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.carbon-project.checked { border-color: var(--green2); background: rgba(13,122,74,0.04); }
+.carbon-project .cp-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.cp-title { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.35; padding-right: 24px; }
+.cp-tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 300; letter-spacing: .8px; padding: 2px 8px; border-radius: 100px; background: rgba(13,122,74,0.08); color: var(--green2); border: 1px solid rgba(13,122,74,0.2); white-space: nowrap; flex-shrink: 0; }
+.cp-detail { font-size: 11px; color: var(--text-secondary); margin-top: 6px; line-height: 1.6; }
+.cp-stats { display: flex; gap: 12px; margin-top: 8px; }
+.cp-stat { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; }
+.cp-stat span { font-weight: 400; color: var(--text); }
+
+/* ── BUDGET ── */
+.budget-box {
+  background: var(--bg);
+  border: 1px solid var(--divider-strong);
+  border-radius: 8px;
+  padding: 14px;
+}
+.budget-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+.budget-row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,0.04); font-size: 12px; }
+.budget-row:last-child { border-bottom: none; padding-bottom: 0; }
+.budget-row .k { color: var(--text-secondary); }
+.budget-row .v { font-family: 'JetBrains Mono', monospace; font-weight: 400; font-size: 12px; color: var(--text); }
+.budget-total { font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: -0.02em; color: var(--text); margin: 10px 0 4px; }
+.budget-total-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+
+/* ── RIGHT PANEL ── */
+.right-panel { padding: 28px 32px; overflow-y: auto; }
+
+/* ── KPI STRIP ── */
+.kpi-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--divider); border: 1px solid var(--divider); border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+@media (max-width: 800px) { .kpi-strip { grid-template-columns: repeat(2,1fr); } }
+.kpi-block { background: var(--bg); padding: 16px 18px; position: relative; }
+.kpi-bar-top { position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.kpi-lbl { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.kpi-val { font-family: 'Instrument Sans', sans-serif; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; line-height: 1; margin-bottom: 3px; }
+.kpi-val.green { color: var(--accent); }
+.kpi-val.red { color: var(--red); }
+.kpi-val.amber { color: var(--amber); }
+.kpi-val.blue { color: var(--blue); }
+.kpi-sub { font-size: 11px; color: var(--text-secondary); }
+.kpi-delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; margin-top: 4px; }
+.kpi-delta.good { color: var(--accent); }
+.kpi-delta.bad { color: var(--red); }
+
+/* ── CHART CARDS ── */
+.charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+@media (max-width: 900px) { .charts-grid { grid-template-columns: 1fr; } }
+.chart-card { border: 1px solid var(--divider); border-radius: 8px; padding: 20px 22px; background: var(--bg); }
+.chart-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 14px; }
+.chart-h240 { position: relative; height: 240px; }
+
+/* ── SOURCE NOTE ── */
+.source-note { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; letter-spacing: 0.3px; color: var(--text-muted); line-height: 1.7; padding: 10px 14px; background: var(--bg-surface); border-radius: 6px; margin-top: 8px; }
+
+/* ── ACTION DETAILS TABLE ── */
+.detail-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.detail-table th { background: var(--bg-surface); font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-muted); padding: 9px 14px; text-align: left; border-bottom: 1px solid var(--divider); }
+.detail-table td { padding: 9px 14px; border-bottom: 1px solid var(--divider); color: var(--text); vertical-align: middle; }
+.detail-table tr:last-child td { border-bottom: none; }
+.detail-table .mono { font-family: 'JetBrains Mono', monospace; font-weight: 300; }
+.detail-table .right { text-align: right; }
+.detail-table tr.selected td { background: rgba(5,167,100,0.04); }
+.detail-table tr.unselected td { color: var(--text-muted); }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align: center; padding: 48px 24px; }
+.empty-icon { font-size: 32px; margin-bottom: 14px; color: var(--text-muted); }
+.empty-title { font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 15px; color: var(--text-secondary); margin-bottom: 6px; }
+.empty-sub { font-size: 12px; color: var(--text-muted); }
+
+.divider-line { height: 1px; background: var(--divider); margin: 20px 0; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <img src="data:image/gif;base64,R0lGODlhlgCKAPf/APX29mnMotbW1uHo5RPUgPz8/FLSm2TFnDh7XsTd0vT9+URERKvRwZGRkYSEhPHy8RLQfmNjY4qKioTNrWxsbBC1bgyKU7LTxMrKyrvUySzSit3d3RC7cVtbWxHAdDLUjRPahMzh2KSkpCHQhenp6QMmF5fRuAlmPgZEKQY4I87OzkLTlA6jY6LMunNzc9nZ2ZLLssbGxhTkije7gSMjIwt7Sjw8POXl5eHh4RvUhE1NTThLQ1NUUxLSfxPXgr6+vvL8+Pf4+Hl5eZvqyHLNpUzZnNHR0UrLkxPdhZ2dnUPOkhfchhvOgaqqqgAAAGrSpTMzM7e3t5zLtzXhlisrK93k4fr6+u7u7mLTouzs7BISErzZzFrcpKnNvhoaGirekHLhsbu7u0PYmH5+fg2VWnTTqSLWiK6ursLXzwsLCxzciVDNl1rVoI7MsQITDMLCwg+wa5zPuY7TtqbRv9347CbdjhLJeqPszILlulvElonFq7Hv1DXVkNvi34nmvglrQeT58NLh2jdYSbGxsYLHqXPareTq59X26BrZhizfkt3q5Pj++/v+/TzWkzTPjBnciCPejeDn5BPVgQ+taRbZhQyGUQ6cXkzSmAdTMiLaiqnu0O3x7x/ZiDjRjwhaNsja0gpzRXXGo9Ll3Sbaiz7PkBPTgFjJmAhgOgQwHRbOfg+pZufs6ZDGrzvOj2nfrPL08+nt7MHy3dfm33/luIjKrgMbEfP19BLLe9n36hLNfAuATc/e18vZ1AUFBQhWNAEJBQEOCQECAgEGBBLOfRLPfRPYgxPZgxLOfBLMfBPYghPag5eXl/n6+mDeqBPZgh5vTOzv7knQlQdNLkPHjRUlHhLPfnzLqCS4eDVHP2rXqNLU03vQq5jIsw6gYNPb2Cs0MOn68xiVX3Sqk23grs/v4RHFd8/f2Pn5+cfz4HrjthTZg0nFkCXfj7TOwx/diyzYjRTNfXjLp43nwNfn4Nbo4EK+iA2QV7e8uVPDkjG/gj3EiTHYkNfh3C7Jhz7dmP///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4wLWMwMDEgNzkuMTRlY2I0MmYyYywgMjAyMy8wMS8xMy0xMjoyNTo0NCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDozNWVhODFmZC00MDZkLWI4NGMtYTYwNS1kNjRiNjE0MWVkODMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QURDMjc5REYyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QURDMjc5REUyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI0LjIgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjM4NTgzNjctMWU4MS00ZTQ4LWFjMzMtODk2MzhmYzAyMDc3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjM1ZWE4MWZkLTQwNmQtYjg0Yy1hNjA1LWQ2NGI2MTQxZWQ4MyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1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" style="width:24px;height:24px;object-fit:contain;margin-right:10px;flex-shrink:0;" alt="Logo"><span class="nav-wordmark">Carbon Hunter</span>
+  <div style="display:flex;gap:6px;margin-left:auto;">
+    <a href="ninh_binh_bilan_carbone.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:transparent;color:var(--accent);border:1px solid var(--accent-border);transition:background .15s;">Bilan</a>
+    <a href="ninh_binh_simulation.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:var(--accent);color:#fff;border:1px solid var(--accent);transition:opacity .15s;">Simulation</a>
+  </div>
+  
+</nav>
+
+<!-- VERTICAL RAIL -->
+<div class="v-rail">
+  <a href="#sim-actions">  <span class="v-rail-label">Actions rapides</span>  <span class="v-rail-dot"></span></a>
+  <a href="#sim-mid">      <span class="v-rail-label">Moyen terme</span>       <span class="v-rail-dot"></span></a>
+  <a href="#sim-long">     <span class="v-rail-label">Long terme</span>         <span class="v-rail-dot"></span></a>
+  <a href="#sim-carbon">   <span class="v-rail-label">Projet carbone</span>    <span class="v-rail-dot"></span></a>
+  <a href="#sim-results">  <span class="v-rail-label">Résultats</span>         <span class="v-rail-dot"></span></a>
+</div>
+
+<!-- DEMO BANNER -->
+<div style="background:#0A0A0A;color:#fff;padding:14px 48px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+  <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:3px;text-transform:uppercase;background:#05A764;color:#fff;padding:3px 10px;border-radius:100px;flex-shrink:0;">Démonstration</span>
+  <span style="flex:1;min-width:280px;">
+    <span style="font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.01em;display:block;margin-bottom:3px;">Ce document illustre l'intérêt commercial et financier d'un bilan carbone à travers des données réalistes reconstituées depuis des benchmarks sectoriels publics.</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.3px;">Le lecteur peut sélectionner des pistes d'amélioration et simuler les bénéfices concrets — réduction d'émissions, économies CBAM, retour sur investissement — qu'il obtiendrait en utilisant nos services. Ce rapport ne constitue pas un audit certifié.</span>
+  </span>
+</div>
+
+<!-- HERO -->
+<div class="sim-hero">
+  <div class="sim-hero-eyebrow">Outil de simulation · Ninh Binh Fertilizer &amp; Chemical Co.</div>
+  <h1>Construisez votre trajectoire de<br><em>réduction carbone</em></h1>
+  <p>Sélectionnez les actions à mettre en œuvre à gauche. Les graphiques et indicateurs se mettent à jour en temps réel pour estimer l'impact sur vos émissions, votre exposition CBAM et votre retour sur investissement jusqu'en 2034.</p>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="sim-layout">
+
+  <!-- LEFT: ACTIONS -->
+  <div class="left-panel">
+    <div class="panel-label">Pistes d'amélioration</div>
+
+    <!-- GROUP 1: QUICK WINS -->
+    <div class="action-group" id="sim-actions">
+      <div class="group-title">
+        Actions rapides
+        <span class="group-badge gb-fast">&lt; 12 mois</span>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'led',event)">
+        <input type="checkbox" id="led" onchange="update()">
+        <div class="action-name">Éclairage LED site complet</div>
+        <div class="action-meta">
+          <span class="action-tag red">−2 800 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $194 000</span>
+          <span class="action-tag green">ROI : 2,1 ans</span>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'solar',event)">
+        <input type="checkbox" id="solar" onchange="update()">
+        <div class="action-name">Solaire toiture bâtiments administratifs (2 MWc)</div>
+        <div class="action-meta">
+          <span class="action-tag red">−1 400 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $1 296 000</span>
+          <span class="action-tag green">ROI : 6,5 ans</span>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'audit',event)">
+        <input type="checkbox" id="audit" onchange="update()">
+        <div class="action-name">Audit énergie + comptage intelligent</div>
+        <div class="action-meta">
+          <span class="action-tag red">−8 500 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $346 000</span>
+          <span class="action-tag green">ROI : 1,4 ans</span>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'fugitive',event)">
+        <input type="checkbox" id="fugitive" onchange="update()">
+        <div class="action-name">Programme détection fuites NH₃ (LDAR)</div>
+        <div class="action-meta">
+          <span class="action-tag red">−14 300 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $486 000</span>
+          <span class="action-tag green">ROI : 1,8 ans</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 2: MEDIUM TERM -->
+    <div class="action-group" id="sim-mid">
+      <div class="group-title">
+        Moyen terme
+        <span class="group-badge gb-mid">1 – 3 ans</span>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'cogen',event)">
+        <input type="checkbox" id="cogen" onchange="update()">
+        <div class="action-name">Cogénération vapeur-électricité (récupération chaleur)</div>
+        <div class="action-meta">
+          <span class="action-tag red">−62 000 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $9 180 000</span>
+          <span class="action-tag green">ROI : 5,2 ans</span>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'gasswitch',event)">
+        <input type="checkbox" id="gasswitch" onchange="update()">
+        <div class="action-name" style="display:flex;align-items:center;gap:6px;padding-right:28px;">
+          Substitution partielle charbon → gaz naturel (30%)
+          <span style="position:relative;display:inline-block;flex-shrink:0;" onclick="event.stopPropagation()">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:rgba(140,98,0,0.12);border:1px solid rgba(140,98,0,0.3);font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:400;color:#8C6200;cursor:help;flex-shrink:0;" onmouseenter="this.nextElementSibling.style.opacity='1'" onmouseleave="this.nextElementSibling.style.opacity='0'">!</span>
+            <span style="position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0A0A0A;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:0.3px;line-height:1.65;padding:10px 14px;border-radius:8px;width:270px;white-space:normal;opacity:0;pointer-events:none;transition:opacity .2s;z-index:500;box-shadow:0 4px 16px rgba(0,0,0,0.18);">Le surcoût opex gaz vs charbon (~$3,5–4,5M/an) n'est pas intégré dans ce ROI. En revanche, l'économie CBAM réelle en 2030 sera probablement supérieure aux projections — le prix ETS est attendu en hausse et le facteur CBAM monte à 51,5%.<span style="position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#0A0A0A;"></span></span>
+          </span>
+        </div>
+        <div class="action-meta">
+          <span class="action-tag red">−388 000 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $25 920 000</span>
+          <span class="action-tag amber">ROI : 9,8 ans</span>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'n2o',event)">
+        <input type="checkbox" id="n2o" onchange="update()">
+        <div class="action-name">Optimisation procédé — réduction CO₂ torchères (−15%)</div>
+        <div class="action-meta">
+          <span class="action-tag red">−16 800 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $2 268 000</span>
+          <span class="action-tag green">ROI : 4,3 ans</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUP 3: LONG TERM -->
+    <div class="action-group" id="sim-long">
+      <div class="group-title">
+        Long terme
+        <span class="group-badge gb-long">3 – 10 ans</span>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'ccs',event)">
+        <input type="checkbox" id="ccs" onchange="update()">
+        <div class="action-name">CCS sur gazéifieur — capture post-combustion</div>
+        <div class="action-meta">
+          <span class="action-tag red">−564 000 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $102 600 000</span>
+          <span class="action-tag amber">ROI : 14,2 ans</span>
+        </div>
+      </div>
+
+      <div class="action-card" onclick="toggle(this,'greennh3',event)">
+        <input type="checkbox" id="greennh3" onchange="update()">
+        <div class="action-name">Ammoniac vert — électrolyse renouvelable (20% prod.)</div>
+        <div class="action-meta">
+          <span class="action-tag red">−310 000 tCO₂e/an</span>
+          <span class="action-tag">Invest. : $73 440 000</span>
+          <span class="action-tag amber">ROI : 16,5 ans</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARBON PROJECT -->
+    <div class="panel-label" id="sim-carbon" style="margin-top:4px;">Compensation — Projet carbone</div>
+
+    <div class="carbon-project" id="redd-card">
+      <!-- Checkbox auto-coché si slider > 0 — non cliquable -->
+      <input type="checkbox" id="redd" style="position:absolute;top:14px;right:14px;width:16px;height:16px;accent-color:#0D7A4A;pointer-events:none;cursor:default;" readonly>
+      <div class="cp-header">
+        <div>
+          <span class="cp-tag">Verra VCS + CCB</span>
+          <div class="cp-title" style="margin-top:6px;">REDD+ Forêt de Kon Tum<br>Protection forêt tropicale, Hauts Plateaux Centre-Vietnam</div>
+        </div>
+      </div>
+      <div class="cp-stats" style="margin-top:8px;margin-bottom:12px;">
+        <div class="cp-stat">Capacité : <span>~200 000 tCO₂/an</span></div>
+        <div class="cp-stat">Prix : <span>$13–19/t</span></div>
+        <div class="cp-stat">Vintage : <span>2024–2030</span></div>
+      </div>
+
+      <!-- Slider intégré -->
+      <div style="border-top:1px solid var(--divider);padding-top:12px;margin-top:4px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Volume de crédits acheté / an</div>
+        <input type="range" id="carbon-volume" min="0" max="200000" step="5000" value="0" style="width:100%;accent-color:#0D7A4A;" oninput="onCarbonSlider()">
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:var(--text-muted);">0 t</span>
+          <span id="carbon-volume-label" style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:400;color:#0D7A4A;">0 tCO₂e</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:var(--text-muted);">200 000 t</span>
+        </div>
+      </div>
+
+      <!-- Méta dynamique — même format que action-card -->
+      <div class="action-meta" style="margin-top:10px;border-top:1px solid var(--divider);padding-top:10px;" id="redd-meta">
+        <span class="action-tag red" id="redd-co2-tag">−0 tCO₂e/an</span>
+        <span class="action-tag" id="redd-cost-tag">Budget : $0/an</span>
+      </div>
+    </div>
+
+    <!-- slider wrap externe supprimé -->
+
+    <!-- BUDGET SUMMARY -->
+    <div class="budget-box">
+      <div class="budget-label">Budget d'investissement total</div>
+      <div id="budget-lines"></div>
+      <div class="budget-total" id="budget-total">$ 0</div>
+      <div class="budget-total-label">Investissement total sélectionné</div>
+    </div>
+    <!-- SAVINGS SUMMARY -->
+    <div class="budget-box" style="margin-top:10px;">
+      <div class="budget-label">Économies annuelles estimées</div>
+      <div id="savings-lines"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--divider);border-radius:6px;overflow:hidden;margin-top:10px;">
+        <div style="background:var(--bg);padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Économie CBAM 2030</div>
+          <div id="savings-cbam" style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.02em;color:var(--accent);">$ 0</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">/an vs. statu quo</div>
+        </div>
+        <div style="background:var(--bg);padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Payback moyen</div>
+          <div id="savings-roi" style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.02em;color:var(--text);">—</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">années (pondéré invest.)</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: RESULTS -->
+  <div class="right-panel" id="sim-results">
+
+    <!-- KPI STRIP -->
+    <div class="kpi-strip" id="kpi-strip">
+      <div class="kpi-block">
+        <div class="kpi-bar-top" style="background:var(--red)"></div>
+        <div class="kpi-lbl">Réduction CO₂e /an</div>
+        <div class="kpi-val green" id="kpi-reduction">0</div>
+        <div class="kpi-sub">tCO₂e évitées</div>
+        <div class="kpi-delta" id="kpi-reduction-pct">— % de réduction</div>
+      </div>
+      <div class="kpi-block">
+        <div class="kpi-bar-top" style="background:var(--amber)"></div>
+        <div class="kpi-lbl">Économie CBAM 2030</div>
+        <div class="kpi-val amber" id="kpi-cbam">$ 0</div>
+        <div class="kpi-sub">vs. scénario actuel</div>
+        <div class="kpi-delta" id="kpi-cbam-sub">Facteur 51,5 %</div>
+      </div>
+      <div class="kpi-block">
+        <div class="kpi-bar-top" style="background:var(--blue)"></div>
+        <div class="kpi-lbl">Intensité cible 2030</div>
+        <div class="kpi-val blue" id="kpi-intensity">3,36</div>
+        <div class="kpi-sub">tCO₂e/t urée</div>
+        <div class="kpi-delta" id="kpi-intensity-delta">Objectif client : 2,20</div>
+      </div>
+      <div class="kpi-block">
+        <div class="kpi-bar-top" style="background:var(--accent)"></div>
+        <div class="kpi-lbl">Retour sur invest.</div>
+        <div class="kpi-val green" id="kpi-roi">—</div>
+        <div class="kpi-sub">Payback moyen</div>
+        <div class="kpi-delta" id="kpi-roi-sub">Sélectionnez des actions</div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW 1 -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-label">Courbe CO₂ — Actuel vs. scénario sélectionné</div>
+        <div class="chart-h240"><canvas id="chartLine"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label">Réduction par action — tCO₂e/an</div>
+        <div class="chart-h240"><canvas id="chartBars"></canvas></div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW 2 -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-label">ROI cumulé sur 10 ans — $</div>
+        <div class="chart-h240"><canvas id="chartRoi"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label">Coût CBAM évité par action — 2030</div>
+        <div class="chart-h240"><canvas id="chartCbamBars"></canvas></div>
+      </div>
+    </div>
+
+    <!-- DETAIL TABLE -->
+    <div class="chart-card" style="margin-top:0;">
+      <div class="chart-label">Détail des actions sélectionnées</div>
+      <div id="detail-table-wrap">
+        <div class="empty-state">
+          <div class="empty-icon">☑</div>
+          <div class="empty-title">Aucune action sélectionnée</div>
+          <div class="empty-sub">Cochez des actions à gauche pour voir leur détail et leur impact ici.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="source-note" style="margin-top:16px;">Hypothèses : Prix ETS CBAM 2030 = $97/tCO₂e (≈€90) · Taux : 1$ = 0,93€ · Facteur CBAM 2030 = 51,5 % · Facteur CBAM 2034 = 100 % · Production urée = 560 000 t/an · Émissions base 2024 = 1 880 000 tCO₂e (S1+S2) · Économies CBAM calculées sur 80 000 t export EU/an · Investissements en $ constants 2024 · Amortissements linéaires · Projet REDD+ Kon Tum : Verra VCS ID en cours de validation, prix moyen $16/tCO₂e retenu pour la simulation.</div>
+  </div>
+
+</div>
+
+<script>
+// ── DATA ──
+const ACTIONS = {
+  led:       { name: 'LED site complet',                   reduction: 2800,   invest: 194000,   payback: 2.1,  delay: 0,  scope: 'S2' },
+  solar:     { name: 'Solaire toiture 2 MWc',              reduction: 1400,   invest: 1296000,  payback: 6.5,  delay: 0,  scope: 'S2' },
+  audit:     { name: 'Audit énergie + comptage',           reduction: 8500,   invest: 346000,   payback: 1.4,  delay: 0,  scope: 'S1+S2' },
+  fugitive:  { name: 'LDAR fuites NH₃',                    reduction: 14300,  invest: 486000,   payback: 1.8,  delay: 0,  scope: 'S1' },
+  cogen:     { name: 'Cogénération vapeur-élec.',          reduction: 62000,  invest: 9180000,  payback: 5.2,  delay: 1.5,scope: 'S1+S2' },
+  gasswitch: { name: 'Substitution charbon→gaz 30%',      reduction: 388000, invest: 25920000, payback: 9.8,  delay: 2,  scope: 'S1' },
+  n2o:       { name: 'Réduction CO₂ torchères −15%',      reduction: 16800,  invest: 2268000,  payback: 4.3,  delay: 1,  scope: 'S1' },
+  ccs:       { name: 'CCS gazéifieur',                     reduction: 564000, invest: 102600000, payback: 14.2, delay: 5,  scope: 'S1' },
+  greennh3:  { name: 'Ammoniac vert 20%',                  reduction: 310000, invest: 73440000, payback: 16.5, delay: 6,  scope: 'S1' },
+};
+
+const BASE_EMISSIONS = 1880000; // tCO2e S1+S2
+const BASE_INTENSITY = 3.36;    // tCO2e/t urea
+const UREA = 560000;            // t/an
+const EU_EXPORT = 80000;        // t/an
+const ETS_2030 = 90;
+const CBAM_2030 = 0.515;
+const ETS_2034 = 85;
+const CBAM_2034 = 1.0;
+const REDD_PRICE = 16;          // $/t
+
+const YEARS = [2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034];
+const CBAM_FACTORS = [0,0.025,0.025,0.05,0.10,0.25,0.515,0.65,0.80,0.90,1.0];
+const ETS_PRICES   = [0,81,81,84,86,91,97,99,95,93,92];
+
+// ── STATE ──
+let selected = new Set(['fugitive','audit','n2o','gasswitch']);
+let carbonOn = false;
+let carbonVol = 0;
+
+// ── CHARTS ──
+Chart.defaults.color = 'rgba(10,10,10,0.42)';
+Chart.defaults.borderColor = 'rgba(0,0,0,0.07)';
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
+Chart.defaults.font.size = 10;
+Chart.defaults.font.weight = '300';
+
+const RED = '#B84030', AMBER = '#8C6200', BLUE = '#1856A0';
+const GREEN = '#05A764', GREEN2 = '#0D7A4A', GRAY = '#D1D5DB';
+
+let chartLine, chartBars, chartRoi, chartCbamBars;
+
+function mkLine() {
+  chartLine = new Chart(document.getElementById('chartLine'), {
+    type: 'line',
+    data: { labels: YEARS, datasets: [
+      { label: 'Actuel (tCO₂e)', data: YEARS.map(() => BASE_EMISSIONS), borderColor: RED, backgroundColor: 'rgba(184,64,48,0.05)', fill: true, tension: 0.2, pointRadius: 3, pointBackgroundColor: '#fff', pointBorderColor: RED, pointBorderWidth: 1.5 },
+      { label: 'Scénario sélectionné', data: YEARS.map(() => BASE_EMISSIONS), borderColor: GREEN, backgroundColor: 'rgba(5,167,100,0.06)', fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: '#fff', pointBorderColor: GREEN, pointBorderWidth: 1.5, borderDash: [5,4] },
+    ]},
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { boxWidth: 10, padding: 14, color: 'rgba(10,10,10,0.5)' } }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${Math.round(c.parsed.y).toLocaleString('fr-FR')} t` } } },
+      scales: { y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v >= 1e6 ? (v/1e6).toFixed(2)+'M' : (v/1000).toFixed(0)+'k' } }, x: { grid: { display: false } } }
+    }
+  });
+}
+
+function mkBars() {
+  chartBars = new Chart(document.getElementById('chartBars'), {
+    type: 'bar',
+    data: { labels: [], datasets: [{ data: [], backgroundColor: GREEN, borderRadius: 3, borderSkipped: false }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${Math.round(c.parsed.x).toLocaleString('fr-FR')} tCO₂e/an` } } },
+      scales: { x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v >= 1e3 ? (v/1000).toFixed(0)+'k' : v } }, y: { grid: { display: false }, ticks: { font: { size: 9 } } } }
+    }
+  });
+}
+
+function mkRoi() {
+  chartRoi = new Chart(document.getElementById('chartRoi'), {
+    type: 'line',
+    data: { labels: Array.from({length:11},(_,i) => 'An '+(i+1)), datasets: [
+      { label: 'ROI cumulé ($)', data: Array(11).fill(0), borderColor: GREEN, backgroundColor: 'rgba(5,167,100,0.18)', fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: '#fff', pointBorderColor: GREEN, pointBorderWidth: 1.5 },
+      { label: 'Investissement total ($)', data: Array(11).fill(0), borderColor: GRAY, borderDash: [4,3], fill: false, tension: 0, pointRadius: 0, borderWidth: 1 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { boxWidth: 10, padding: 14, color: 'rgba(10,10,10,0.5)' } }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: $${Math.round(c.parsed.y).toLocaleString('fr-FR')} (≈€${Math.round(c.parsed.y/1.08).toLocaleString('fr-FR')})` } } },
+      scales: { y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v >= 1e6 ? '$'+(v/1e6).toFixed(1)+'M' : v >= 1000 ? '$'+(v/1000).toFixed(0)+'k' : '$'+v } }, x: { grid: { display: false } } }
+    }
+  });
+}
+
+function mkCbamBars() {
+  chartCbamBars = new Chart(document.getElementById('chartCbamBars'), {
+    type: 'bar',
+    data: { labels: [], datasets: [{ data: [], backgroundColor: AMBER, borderRadius: 3, borderSkipped: false }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` $${Math.round(c.parsed.x).toLocaleString('fr-FR')} économisés/an (≈€${Math.round(c.parsed.x/1.08).toLocaleString('fr-FR')})` } } },
+      scales: { x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { callback: v => v >= 1e3 ? '$'+(v/1000).toFixed(0)+'k' : '$'+v } }, y: { grid: { display: false }, ticks: { font: { size: 9 } } } }
+    }
+  });
+}
+
+mkLine(); mkBars(); mkRoi(); mkCbamBars();
+
+// Pre-check default actions
+['fugitive','audit','n2o','gasswitch'].forEach(id => {
+  const cb = document.getElementById(id);
+  if (cb) {
+    cb.checked = true;
+    const card = cb.closest('.action-card');
+    if (card) card.classList.add('checked');
+  }
+});
+update();
+
+// ── TOGGLE ──
+function toggle(card, id, event) {
+  // If the click came directly from the checkbox, don't invert again
+  const cb = document.getElementById(id);
+  if (event && event.target === cb) {
+    card.classList.toggle('checked', cb.checked);
+    if (cb.checked) selected.add(id); else selected.delete(id);
+  } else {
+    cb.checked = !cb.checked;
+    card.classList.toggle('checked', cb.checked);
+    if (cb.checked) selected.add(id); else selected.delete(id);
+  }
+  update();
+}
+
+function onCarbonSlider() {
+  const vol = parseInt(document.getElementById('carbon-volume').value);
+  carbonVol = vol;
+  carbonOn = vol > 0;
+
+  // Update checkbox state (non-cliquable, juste visuel)
+  const cb = document.getElementById('redd');
+  cb.checked = carbonOn;
+
+  // Update card border
+  document.getElementById('redd-card').classList.toggle('checked', carbonOn);
+
+  // Update label
+  document.getElementById('carbon-volume-label').textContent =
+    vol > 0 ? vol.toLocaleString('fr-FR') + ' tCO₂e' : '0 tCO₂e';
+
+  // Update meta tags (même format action-card)
+  const cost = vol * REDD_PRICE;
+  document.getElementById('redd-co2-tag').textContent =
+    vol > 0 ? '−' + vol.toLocaleString('fr-FR') + ' tCO₂e/an' : '−0 tCO₂e/an';
+  document.getElementById('redd-cost-tag').textContent =
+    vol > 0 ? 'Budget : $' + cost.toLocaleString('fr-FR') + '/an' : 'Budget : $0/an';
+
+  update();
+}
+
+// ── UPDATE ──
+function update() {
+  carbonVol = parseInt(document.getElementById('carbon-volume').value);
+
+  // Totals
+  let totalReduction = 0, totalInvest = 0, weightedPayback = 0, totalWeight = 0;
+  selected.forEach(id => {
+    const a = ACTIONS[id];
+    totalReduction += a.reduction;
+    totalInvest += a.invest;
+    weightedPayback += a.payback * a.invest;
+    totalWeight += a.invest;
+  });
+
+  const carbonCost = carbonOn ? carbonVol * REDD_PRICE : 0;
+  const effectiveCarbonVol = carbonOn ? carbonVol : 0;
+  const totalNetReduction = totalReduction + effectiveCarbonVol;
+
+  const avgPayback = totalWeight > 0 ? weightedPayback / totalWeight : 0;
+  const newIntensity = Math.max(0.2, BASE_INTENSITY - (totalReduction / UREA));
+  const baseCbam2030 = EU_EXPORT * BASE_INTENSITY * ETS_2030 * CBAM_2030;
+  const newCbam2030  = EU_EXPORT * newIntensity * ETS_2030 * CBAM_2030;
+  const cbamSaving2030 = baseCbam2030 - newCbam2030;
+  const reductionPct = (totalNetReduction / BASE_EMISSIONS * 100);
+
+  // ── KPIs ──
+  document.getElementById('kpi-reduction').textContent = totalNetReduction >= 1000
+    ? (totalNetReduction/1000).toFixed(0)+' k' : totalNetReduction.toLocaleString('fr-FR');
+  document.getElementById('kpi-reduction-pct').textContent = reductionPct > 0
+    ? `↓ ${reductionPct.toFixed(1)} % vs. base 2024`
+    : '— % de réduction';
+  document.getElementById('kpi-reduction-pct').className = 'kpi-delta' + (reductionPct > 0 ? ' good' : '');
+
+  const cbamUsd = cbamSaving2030;
+  const cbamEur = cbamUsd / 1.08;
+  // Update savings panel
+  if (document.getElementById('savings-cbam')) {
+    document.getElementById('savings-cbam').textContent = cbamUsd >= 1e6
+      ? '$ '+(cbamUsd/1e6).toFixed(1)+' M'
+      : cbamUsd >= 1000 ? '$ '+(cbamUsd/1000).toFixed(0)+' k' : '$ 0';
+  }
+  document.getElementById('kpi-cbam').textContent = cbamUsd >= 1e6
+    ? '$ '+(cbamUsd/1e6).toFixed(1)+' M'
+    : cbamUsd >= 1000 ? '$ '+(cbamUsd/1000).toFixed(0)+' k' : '$ 0';
+  const cbamEurStr = cbamEur >= 1e6
+    ? '€'+(cbamEur/1e6).toFixed(1)+'M'
+    : cbamEur >= 1000 ? '€'+(cbamEur/1000).toFixed(0)+'k' : '€0';
+  document.getElementById('kpi-cbam-sub').textContent = cbamSaving2030 > 0
+    ? `≈ ${cbamEurStr} · 1$=0,93€`
+    : 'Facteur 51,5 %';
+
+  document.getElementById('kpi-intensity').textContent = newIntensity.toFixed(2);
+  const intensityDelta = newIntensity - 2.20;
+  document.getElementById('kpi-intensity-delta').textContent = intensityDelta <= 0
+    ? `✓ Objectif client atteint !`
+    : `Objectif : 2,20 · Écart : +${intensityDelta.toFixed(2)}`;
+  document.getElementById('kpi-intensity-delta').className = 'kpi-delta' + (intensityDelta <= 0 ? ' good' : ' bad');
+
+  if (totalInvest > 0 && avgPayback > 0) {
+    document.getElementById('kpi-roi').textContent = avgPayback.toFixed(1)+' ans';
+    const annualSavings = totalReduction * ETS_2030 * CBAM_2030 / UREA * 80000 / UREA;
+    document.getElementById('kpi-roi-sub').textContent = `sur $${(totalInvest/1e6).toFixed(1)}M investis`;
+    document.getElementById('savings-roi').textContent = avgPayback.toFixed(1) + ' ans';
+  } else {
+    document.getElementById('kpi-roi').textContent = '—';
+    document.getElementById('kpi-roi-sub').textContent = 'Sélectionnez des actions';
+    document.getElementById('savings-roi').textContent = '—';
+  }
+
+  // ── LINE CHART ──
+  const scenarioData = YEARS.map((y, i) => {
+    let reduc = 0;
+    selected.forEach(id => {
+      const a = ACTIONS[id];
+      const startYear = 2024 + a.delay;
+      if (y >= startYear) {
+        const rampFactor = Math.min(1, (y - startYear + 1));
+        reduc += a.reduction * rampFactor;
+      }
+    });
+    const carbonOffset = (carbonOn && y >= 2025) ? effectiveCarbonVol : 0;
+    return Math.max(BASE_EMISSIONS * 0.1, BASE_EMISSIONS - reduc - carbonOffset);
+  });
+  chartLine.data.datasets[1].data = scenarioData;
+  chartLine.update('none');
+
+  // ── BAR CHART ──
+  const selArr = [...selected];
+  chartBars.data.labels = selArr.map(id => ACTIONS[id].name.substring(0,24));
+  chartBars.data.datasets[0].data = selArr.map(id => ACTIONS[id].reduction);
+  if (carbonOn) {
+    chartBars.data.labels.push('REDD+ Kon Tum');
+    chartBars.data.datasets[0].data.push(effectiveCarbonVol);
+    const colors = selArr.map(() => GREEN);
+    colors.push(GREEN2);
+    chartBars.data.datasets[0].backgroundColor = colors;
+  } else {
+    chartBars.data.datasets[0].backgroundColor = GREEN;
+  }
+  chartBars.update('none');
+
+  // ── ROI CHART ──
+  let cumulative = 0;
+  const totalInvestForChart = totalInvest + carbonCost * 10; // carbon cost over 10 years
+  const annualBenefits = selArr.map(id => {
+    const a = ACTIONS[id];
+    const cbamBenefit = a.reduction * BASE_INTENSITY / UREA * EU_EXPORT / UREA * ETS_2030 * CBAM_2030;
+    return cbamBenefit + a.reduction * 0.02; // simplified energy savings
+  });
+  const totalAnnualBenefit = annualBenefits.reduce((a,b) => a+b, 0) + (carbonOn ? 0 : 0);
+  const roiData = Array.from({length:11},(_,i) => {
+    cumulative += totalAnnualBenefit * 1000;
+    return cumulative - totalInvest;
+  });
+  chartRoi.data.datasets[0].data = roiData;
+  chartRoi.data.datasets[1].data = Array(11).fill(totalInvest);
+  chartRoi.update('none');
+
+  // ── CBAM BARS ──
+  chartCbamBars.data.labels = selArr.map(id => ACTIONS[id].name.substring(0,24));
+  chartCbamBars.data.datasets[0].data = selArr.map(id => {
+    const r = ACTIONS[id].reduction;
+    return r / UREA * EU_EXPORT * ETS_2030 * CBAM_2030;
+  });
+  chartCbamBars.update('none');
+
+  // ── BUDGET ──
+  const budgetLines = document.getElementById('budget-lines');
+  budgetLines.innerHTML = '';
+  let totalBudget = 0;
+  selected.forEach(id => {
+    const a = ACTIONS[id];
+    totalBudget += a.invest;
+    budgetLines.innerHTML += `<div class="budget-row"><span class="k">${a.name.substring(0,22)}</span><span class="v">$${(a.invest/1000).toFixed(0)}k</span></div>`;
+  });
+  if (carbonOn) {
+    const annualCarbonCost = effectiveCarbonVol * REDD_PRICE;
+    totalBudget += annualCarbonCost;
+    budgetLines.innerHTML += `<div class="budget-row"><span class="k" style="color:#0D7A4A">REDD+ Kon Tum /an</span><span class="v" style="color:#0D7A4A">$${(annualCarbonCost/1000).toFixed(0)}k</span></div>`;
+  }
+  document.getElementById('budget-total').textContent = totalBudget >= 1e6
+    ? `$ ${(totalBudget/1e6).toFixed(2)} M`
+    : `$ ${totalBudget.toLocaleString('fr-FR')}`;
+
+  // ── DETAIL TABLE ──
+  const wrap = document.getElementById('detail-table-wrap');
+  if (selected.size === 0 && !carbonOn) {
+    wrap.innerHTML = `<div class="empty-state"><div class="empty-icon">☑</div><div class="empty-title">Aucune action sélectionnée</div><div class="empty-sub">Cochez des actions à gauche pour voir leur détail ici.</div></div>`;
+    return;
+  }
+  let rows = '';
+  selected.forEach(id => {
+    const a = ACTIONS[id];
+    const cbam = (a.reduction / UREA * EU_EXPORT * ETS_2030 * CBAM_2030 / 1000).toFixed(0);
+    const delayStr = a.delay === 0 ? 'Immédiat' : `An +${a.delay}`;
+    rows += `<tr class="selected">
+      <td><span class="status-dot" style="background:var(--accent)"></span>${a.name}</td>
+      <td class="mono right">${a.reduction.toLocaleString('fr-FR')}</td>
+      <td class="mono right">$${(a.invest/1000).toFixed(0)}k</td>
+      <td class="mono right">${a.payback} ans</td>
+      <td class="mono right">$${cbam}k</td>
+      <td class="mono">${a.scope}</td>
+      <td class="mono">${delayStr}</td>
+    </tr>`;
+  });
+  if (carbonOn) {
+    rows += `<tr class="selected">
+      <td><span class="status-dot" style="background:#0D7A4A"></span>REDD+ Kon Tum (${(effectiveCarbonVol/1000).toFixed(0)}k t)</td>
+      <td class="mono right">${effectiveCarbonVol.toLocaleString('fr-FR')}</td>
+      <td class="mono right">$${(effectiveCarbonVol*REDD_PRICE/1000).toFixed(0)}k/an</td>
+      <td class="mono right">—</td>
+      <td class="mono right">—</td>
+      <td class="mono">Compensation</td>
+      <td class="mono">2025+</td>
+    </tr>`;
+  }
+  wrap.innerHTML = `<div style="overflow-x:auto;"><table class="detail-table">
+    <thead><tr>
+      <th>Action</th><th class="right">tCO₂e/an</th><th class="right">Investissement</th>
+      <th class="right">Payback</th><th class="right">Éco. CBAM 2030</th>
+      <th>Scope</th><th>Déploiement</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+// init
+update();
+
+// ── VERTICAL RAIL HIGHLIGHT ──
+const railAnchors = ['sim-actions','sim-mid','sim-long','sim-carbon','sim-results'];
+const railLinks = document.querySelectorAll('.v-rail a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  railAnchors.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.getBoundingClientRect().top + window.scrollY - 120) cur = id;
+  });
+  railLinks.forEach(a => {
+    const href = a.getAttribute('href').replace('#','');
+    a.classList.toggle('active', href === cur);
+  });
+}, { passive: true });
+</script>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revue Critique — Ninh Binh GHG Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family:'JetBrains Mono'; src:url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/files/jetbrains-mono-latin-300-normal.woff2') format('woff2'); font-weight:300; font-display:swap; }
+
+:root {
+  --bg:#fff; --bg-s:#F7F7F5; --bg-d:#EFEFEB;
+  --text:#0A0A0A; --t2:rgba(10,10,10,0.52); --t3:rgba(10,10,10,0.35);
+  --div:rgba(0,0,0,0.08); --divs:rgba(0,0,0,0.13);
+  --green:#05A764; --gs:rgba(5,167,100,0.08); --gb:rgba(5,167,100,0.25);
+  --red:#B84030; --rs:rgba(184,64,48,0.07); --rb:rgba(184,64,48,0.18);
+  --amber:#8C6200; --as:rgba(140,98,0,0.07); --ab:rgba(140,98,0,0.18);
+  --blue:#1856A0; --bs:rgba(24,86,160,0.07); --bb:rgba(24,86,160,0.18);
+  --purple:#5B2B9E; --ps:rgba(91,43,158,0.07); --pb:rgba(91,43,158,0.18);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");background-size:128px;opacity:0.018;pointer-events:none;z-index:9999;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7;}
+
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--div);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:56px;}
+.wm{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);}
+.nav-tabs{display:flex;gap:6px;}
+.ntab{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 14px;border-radius:100px;border:1px solid var(--gb);color:var(--green);background:transparent;transition:background .15s;}
+.ntab:hover{background:var(--gs);}
+.nr{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1px;text-transform:uppercase;color:var(--t3);}
+
+/* HERO */
+.hero{padding:60px 48px 44px;border-bottom:1px solid var(--div);}
+.ey{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:14px;}
+.hero h1{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:34px;letter-spacing:-0.02em;line-height:1.15;margin-bottom:8px;}
+.hero h1 em{font-style:normal;color:var(--green);}
+.hero p{font-size:13px;color:var(--t2);max-width:700px;line-height:1.8;}
+.role-badges{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.rbadge{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;padding:5px 14px;border-radius:100px;}
+.rb-verif{background:var(--ps);color:var(--purple);border:1px solid var(--pb);}
+.rb-ceo{background:var(--bs);color:var(--blue);border:1px solid var(--bb);}
+
+/* SCORE BANNER */
+.score-banner{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--div);border:1px solid var(--div);border-radius:8px;overflow:hidden;margin:40px 0 0;}
+.score-cell{background:var(--bg);padding:20px 22px;}
+.sc-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:8px;}
+.sc-val{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:28px;letter-spacing:-0.02em;line-height:1;}
+.sc-sub{font-size:11px;color:var(--t2);margin-top:4px;}
+@media(max-width:700px){.score-banner{grid-template-columns:repeat(2,1fr);}}
+
+/* CONTAINER */
+.container{max-width:1040px;margin:0 auto;padding:52px 48px;}
+
+/* SECTION */
+.sec{margin-bottom:64px;}
+.sec-hdr{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid var(--div);}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:2px;text-transform:uppercase;color:var(--t3);}
+.sec-title{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:20px;letter-spacing:-0.01em;}
+.badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1px;padding:3px 11px;border-radius:100px;}
+.b-ok{background:var(--gs);color:var(--green);border:1px solid var(--gb);}
+.b-warn{background:var(--as);color:var(--amber);border:1px solid var(--ab);}
+.b-err{background:var(--rs);color:var(--red);border:1px solid var(--rb);}
+.b-info{background:var(--bs);color:var(--blue);border:1px solid var(--bb);}
+.b-purple{background:var(--ps);color:var(--purple);border:1px solid var(--pb);}
+
+/* FINDING CARD */
+.finding{border-radius:10px;padding:20px 22px;margin-bottom:14px;position:relative;}
+.f-ok{background:var(--gs);border:1px solid var(--gb);}
+.f-warn{background:var(--as);border:1px solid var(--ab);}
+.f-err{background:var(--rs);border:1px solid var(--rb);}
+.f-info{background:var(--bs);border:1px solid var(--bb);}
+.f-purple{background:var(--ps);border:1px solid var(--pb);}
+.f-tag{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;padding:2px 9px;border-radius:100px;display:inline-block;margin-bottom:8px;}
+.ft-ok{background:rgba(5,167,100,0.15);color:var(--green);}
+.ft-warn{background:rgba(140,98,0,0.15);color:var(--amber);}
+.ft-err{background:rgba(184,64,48,0.15);color:var(--red);}
+.ft-info{background:rgba(24,86,160,0.15);color:var(--blue);}
+.ft-purple{background:rgba(91,43,158,0.15);color:var(--purple);}
+.f-title{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:14px;margin-bottom:6px;}
+.f-ok .f-title{color:var(--green);}
+.f-warn .f-title{color:var(--amber);}
+.f-err .f-title{color:var(--red);}
+.f-info .f-title{color:var(--blue);}
+.f-purple .f-title{color:var(--purple);}
+.f-body{font-size:12px;line-height:1.75;color:var(--text);}
+.f-ref{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:var(--t3);margin-top:8px;letter-spacing:0.3px;}
+
+/* DUAL LENS BOX */
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+@media(max-width:720px){.dual{grid-template-columns:1fr;}}
+.lens{border-radius:10px;padding:16px 18px;}
+.lens-verif{background:var(--ps);border:1px solid var(--pb);}
+.lens-ceo{background:var(--bs);border:1px solid var(--bb);}
+.lens-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.lens-verif .lens-label{color:var(--purple);}
+.lens-ceo .lens-label{color:var(--blue);}
+.lens-body{font-size:12px;line-height:1.7;color:var(--text);}
+
+/* TOOLTIP */
+.tip-wrap{position:relative;display:inline-block;}
+.tip-trigger{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--div);border:1px solid var(--divs);font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:400;color:var(--t2);cursor:help;vertical-align:middle;margin-left:4px;transition:background .15s;}
+.tip-trigger:hover{background:var(--text);color:#fff;}
+.tip-box{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#0A0A0A;color:#fff;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:0.3px;line-height:1.6;padding:10px 14px;border-radius:8px;white-space:nowrap;max-width:280px;white-space:normal;opacity:0;pointer-events:none;transition:opacity .2s;z-index:500;box-shadow:0 4px 16px rgba(0,0,0,0.15);}
+.tip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#0A0A0A;}
+.tip-wrap:hover .tip-box{opacity:1;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px;}
+.tbl th{background:var(--bg-d,#EFEFEB);font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;color:var(--t3);padding:9px 14px;text-align:left;border-bottom:1px solid var(--div);}
+.tbl td{padding:9px 14px;border-bottom:1px solid var(--div);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl .mono{font-family:'JetBrains Mono',monospace;font-weight:300;font-size:11px;}
+.ok{color:var(--green);}
+.warn{color:var(--amber);}
+.err{color:var(--red);}
+
+/* SIDEBAR PULL QUOTE */
+.pull{border-left:3px solid var(--green);padding:14px 20px;margin:20px 0;background:var(--gs);border-radius:0 8px 8px 0;}
+.pull p{font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:600;line-height:1.55;color:var(--text);}
+.pull cite{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:var(--t3);display:block;margin-top:6px;}
+
+.pull-red{border-left-color:var(--red);background:var(--rs);}
+.pull-red p{color:var(--red);}
+.pull-amber{border-left-color:var(--amber);background:var(--as);}
+.pull-amber p{color:var(--amber);}
+
+/* V-RAIL */
+.v-rail{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+.v-rail a{display:flex;align-items:center;gap:8px;text-decoration:none;padding:3px 0;}
+.vrl{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:1px;text-transform:uppercase;color:var(--t3);opacity:0;transform:translateX(6px);transition:opacity .2s,transform .2s;white-space:nowrap;pointer-events:none;}
+.v-rail a:hover .vrl,.v-rail a.active .vrl{opacity:1;transform:translateX(0);}
+.v-rail a.active .vrl{color:var(--green);}
+.vrd{width:6px;height:6px;border-radius:50%;background:var(--divs);flex-shrink:0;transition:background .2s,transform .2s;}
+.v-rail a:hover .vrd{background:var(--t3);transform:scale(1.3);}
+.v-rail a.active .vrd{background:var(--green);transform:scale(1.4);}
+@media(max-width:900px){.v-rail{display:none;}}
+
+footer{border-top:1px solid var(--div);padding:22px 48px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+footer p{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:var(--t3);line-height:1.6;}
+</style>
+</head>
+<body>
+
+<nav>
+  <img src="data:image/gif;base64,R0lGODlhlgCKAPf/APX29mnMotbW1uHo5RPUgPz8/FLSm2TFnDh7XsTd0vT9+URERKvRwZGRkYSEhPHy8RLQfmNjY4qKioTNrWxsbBC1bgyKU7LTxMrKyrvUySzSit3d3RC7cVtbWxHAdDLUjRPahMzh2KSkpCHQhenp6QMmF5fRuAlmPgZEKQY4I87OzkLTlA6jY6LMunNzc9nZ2ZLLssbGxhTkije7gSMjIwt7Sjw8POXl5eHh4RvUhE1NTThLQ1NUUxLSfxPXgr6+vvL8+Pf4+Hl5eZvqyHLNpUzZnNHR0UrLkxPdhZ2dnUPOkhfchhvOgaqqqgAAAGrSpTMzM7e3t5zLtzXhlisrK93k4fr6+u7u7mLTouzs7BISErzZzFrcpKnNvhoaGirekHLhsbu7u0PYmH5+fg2VWnTTqSLWiK6ursLXzwsLCxzciVDNl1rVoI7MsQITDMLCwg+wa5zPuY7TtqbRv9347CbdjhLJeqPszILlulvElonFq7Hv1DXVkNvi34nmvglrQeT58NLh2jdYSbGxsYLHqXPareTq59X26BrZhizfkt3q5Pj++/v+/TzWkzTPjBnciCPejeDn5BPVgQ+taRbZhQyGUQ6cXkzSmAdTMiLaiqnu0O3x7x/ZiDjRjwhaNsja0gpzRXXGo9Ll3Sbaiz7PkBPTgFjJmAhgOgQwHRbOfg+pZufs6ZDGrzvOj2nfrPL08+nt7MHy3dfm33/luIjKrgMbEfP19BLLe9n36hLNfAuATc/e18vZ1AUFBQhWNAEJBQEOCQECAgEGBBLOfRLPfRPYgxPZgxLOfBLMfBPYghPag5eXl/n6+mDeqBPZgh5vTOzv7knQlQdNLkPHjRUlHhLPfnzLqCS4eDVHP2rXqNLU03vQq5jIsw6gYNPb2Cs0MOn68xiVX3Sqk23grs/v4RHFd8/f2Pn5+cfz4HrjthTZg0nFkCXfj7TOwx/diyzYjRTNfXjLp43nwNfn4Nbo4EK+iA2QV7e8uVPDkjG/gj3EiTHYkNfh3C7Jhz7dmP///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4wLWMwMDEgNzkuMTRlY2I0MmYyYywgMjAyMy8wMS8xMy0xMjoyNTo0NCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDozNWVhODFmZC00MDZkLWI4NGMtYTYwNS1kNjRiNjE0MWVkODMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QURDMjc5REYyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QURDMjc5REUyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI0LjIgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjM4NTgzNjctMWU4MS00ZTQ4LWFjMzMtODk2MzhmYzAyMDc3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjM1ZWE4MWZkLTQwNmQtYjg0Yy1hNjA1LWQ2NGI2MTQxZWQ4MyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1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" style="width:24px;height:24px;object-fit:contain;margin-right:10px;flex-shrink:0;" alt="Logo"><span class="wm">Carbon Hunter</span>
+  <div class="nav-tabs">
+    <a class="ntab" href="ninh_binh_bilan_carbone.html">Bilan</a>
+    <a class="ntab" href="ninh_binh_simulation.html">Simulation</a>
+    <a class="ntab" href="ninh_binh_calculs.html">Calculs</a>
+  </div>
+  
+</nav>
+
+<div class="v-rail">
+  <a href="#verdict"><span class="vrl">Verdict</span><span class="vrd"></span></a>
+  <a href="#boundaries"><span class="vrl">Boundaries</span><span class="vrd"></span></a>
+  <a href="#scope1r"><span class="vrl">Scope 1</span><span class="vrd"></span></a>
+  <a href="#scope2r"><span class="vrl">Scope 2</span><span class="vrd"></span></a>
+  <a href="#scope3r"><span class="vrl">Scope 3</span><span class="vrd"></span></a>
+  <a href="#intensity"><span class="vrl">Intensité</span><span class="vrd"></span></a>
+  <a href="#cbamr"><span class="vrl">CBAM</span><span class="vrd"></span></a>
+  <a href="#ceo"><span class="vrl">Lecture CEO</span><span class="vrd"></span></a>
+  <a href="#reco"><span class="vrl">Recommandations</span><span class="vrd"></span></a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="ey">Revue critique · Lead Verifier + Lecture CEO</div>
+  <h1>Analyse méthodologique<br><em>Ninh Binh GHG Inventory 2024</em></h1>
+  <p>Ce document adopte successivement deux postures : celle d'un Lead Verifier accrédité ISO 14064-3 passant en revue la rigueur méthodologique et les choix de boundaries, puis celle d'un CEO prospect qui lit l'étude pour y trouver des leviers d'action en moins de 10 minutes.</p>
+  <div class="role-badges">
+    <span class="rbadge rb-verif">👁 Lead Verifier · ISO 14064-3 · GHG Protocol</span>
+    <span class="rbadge rb-ceo">📊 CEO / Prospect · Lecture décision</span>
+  </div>
+
+  <!-- SCORE BANNER -->
+  <div class="score-banner">
+    <div class="score-cell">
+      <div class="sc-label">Conformité structurelle</div>
+      <div class="sc-val" style="color:var(--amber)">B+</div>
+      <div class="sc-sub">Solide sur S1/S2 · Lacunes boundaries</div>
+    </div>
+    <div class="score-cell">
+      <div class="sc-label">Facteurs d'émission</div>
+      <div class="sc-val" style="color:var(--green)">A−</div>
+      <div class="sc-sub">Sources reconnues · 1 erreur de méthode</div>
+    </div>
+    <div class="score-cell">
+      <div class="sc-label">Lisibilité CEO</div>
+      <div class="sc-val" style="color:var(--green)">A</div>
+      <div class="sc-sub">KPI visibles · CBAM bien positionné</div>
+    </div>
+    <div class="score-cell">
+      <div class="sc-label">Prêt pour audit réel</div>
+      <div class="sc-val" style="color:var(--red)">C+</div>
+      <div class="sc-sub">7 points à valider sur le terrain</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══ VERDICT ══ -->
+  <div class="sec" id="verdict">
+    <div class="sec-hdr">
+      <span class="sec-num">00</span>
+      <h2 class="sec-title">Verdict global — Lead Verifier</h2>
+      <span class="badge b-warn">Non certifiable en l'état · Certifiable après 7 actions</span>
+    </div>
+
+    <div class="pull">
+      <p>La structure est conforme aux principes GHG Protocol et ISO 14064-1:2018. Les choix de facteurs d'émission sont défendables et sourcés. Ce qui manque pour un vrai audit : la justification documentée du choix de consolidation, les preuves des données d'activité, et une déclaration d'incertitude quantifiée.</p>
+      <cite>— Posture Lead Verifier · Référence GHG Protocol Corporate Standard (Rev. 2004) + ISO 14064-1:2018</cite>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Conforme</span>
+      <div class="f-title">Structure Scope 1 / 2 / 3 correctement implémentée</div>
+      <div class="f-body">La séparation des trois scopes est rigoureuse. Les catégories Scope 3 sélectionnées (Cat.1, Cat.4, Cat.9) sont pertinentes et justifiées par le critère de matérialité (&gt;1% du total). L'exclusion documentée de Cat.11 (N₂O épandage, hors périmètre CBAM) est méthodologiquement correcte et conforme à la pratique des auditeurs CBAM.</div>
+      <div class="f-ref">Réf : GHG Protocol Corporate Standard Ch.4 · ISO 14064-1:2018 §5.2 (operational boundaries)</div>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Conforme</span>
+      <div class="f-title">Gaz inventoriés conformes — CO₂, CH₄, N₂O, GWP AR6</div>
+      <div class="f-body">L'utilisation des GWP AR6 (IPCC 2021) est le choix actuel recommandé. GWP N₂O = 273 (AR6) vs. 298 (AR5) — le choix AR6 est correct et plus conservateur sur la N₂O. Cohérent avec les exigences CBAM (Règlement UE 2023/956 Art. 7).</div>
+      <div class="f-ref">Réf : IPCC AR6 WGI, Table 7.SM.7 · Règlement UE 2023/956 Annexe IV</div>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ Attention</span>
+      <div class="f-title">Année de base non documentée — recalcul manquant</div>
+      <div class="f-body">Le rapport présente une tendance 2021–2024 mais ne documente pas formellement d'<em>année de référence fixe</em> (base year) avec politique de recalcul. ISO 14064-1:2018 §5.5 exige que l'organisation définisse une année de référence, documente les critères déclencheurs d'un recalcul (changement de périmètre, acquisition, correction d'erreur matérielle &gt;5%), et conserve les données historiques vérifiées. Sans cela, les objectifs de réduction ne peuvent pas être suivis de façon auditables.</div>
+      <div class="f-ref">Réf : ISO 14064-1:2018 §5.5 · GHG Protocol Corporate Standard Ch.5 (Base Year Emissions Recalculation)</div>
+    </div>
+
+    <div class="finding f-err">
+      <span class="f-tag ft-err">✗ Non-conformité</span>
+      <div class="f-title">Absence de déclaration d'incertitude quantifiée</div>
+      <div class="f-body">ISO 14064-1:2018 §7.3 impose que le rapport GHG inclue une évaluation de l'incertitude des données d'activité et des facteurs d'émission, au minimum qualitative (Tier 1), idéalement quantitative (Tier 2 avec intervalle de confiance). Notre mémo de calculs documente les niveaux de fiabilité, mais le bilan lui-même n'affiche pas d'indication d'incertitude sur les totaux. Pour un vrai audit, le verifier ne peut pas émettre un avis d'assurance raisonnable sans cette section.</div>
+      <div class="f-ref">Réf : ISO 14064-1:2018 §7.3(g) · GHG Protocol Corporate Standard Ch.8 (Uncertainty Management)</div>
+    </div>
+  </div>
+
+  <!-- ══ BOUNDARIES ══ -->
+  <div class="sec" id="boundaries">
+    <div class="sec-hdr">
+      <span class="sec-num">01</span>
+      <h2 class="sec-title">Boundaries organisationnels &amp; opérationnels
+        <span class="tip-wrap"><span class="tip-trigger">?</span><span class="tip-box">ISO 14064-1 distingue deux types de boundaries : organisationnel (quelle entité légale ?) et opérationnel (quelles sources d'émission ?). Les deux doivent être explicitement documentés et justifiés.</span></span>
+      </h2>
+      <span class="badge b-warn">Choix correct · Justification insuffisante</span>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Correct</span>
+      <div class="f-title">Contrôle opérationnel — choix adapté au contexte Vinachem</div>
+      <div class="f-body">Le choix du contrôle opérationnel est le plus courant et le plus adapté ici. Ninh Binh Fertilizer est une filiale à 100% de Vinachem (contrôle opérationnel total). Il n'y a pas de joint-venture ni de structure partagée identifiée. Ce choix est conforme et n'aurait pas de conséquence différente avec le contrôle financier dans ce cas précis — ce qui est une bonne chose car cela simplifie la vérification.
+        <span class="tip-wrap"><span class="tip-trigger">?</span><span class="tip-box">Le contrôle opérationnel s'applique quand une entité a pleine autorité pour introduire et implémenter ses politiques d'exploitation. GHG Protocol Corporate Standard, Ch.3.</span></span>
+      </div>
+      <div class="f-ref">Réf : GHG Protocol Corporate Standard Ch.3 · EPA Organizational Boundaries Guidance · ISO 14064-1:2018 §5.1</div>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ À documenter</span>
+      <div class="f-title">Justification du choix de consolidation absente du rapport</div>
+      <div class="f-body">Le bilan indique "contrôle opérationnel" mais ne documente pas : (1) pourquoi ce choix plutôt que financier, (2) si des actifs loués ou des équipements en prestation sont inclus ou exclus, (3) le traitement des véhicules de sous-traitants sur site. Pour un rapport auditable, une section "Choix de consolidation et justification" de 3–4 lignes est nécessaire.
+        <span class="tip-wrap"><span class="tip-trigger">?</span><span class="tip-box">La différence principale entre contrôle opérationnel et financier se pose pour les JV et actifs loués. Dans le cas d'une filiale 100%, les deux approches donnent le même résultat.</span></span>
+      </div>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ À compléter</span>
+      <div class="f-title">Boundary opérationnel — exclusions non documentées</div>
+      <div class="f-body">Le rapport couvre le site de Khanh Phu mais ne documente pas explicitement : les émissions des prestataires opérant sur site (maintenance, sécurité, restauration), le traitement des utilités partagées dans le parc industriel (eau industrielle, vapeur achetée d'un tiers éventuel), et les émissions de la flotte de livraison si elle est en leasing. Ces exclusions peuvent être justifiées par le critère de matérialité, mais doivent être nommées.</div>
+      <div class="f-ref">Réf : GHG Protocol Corporate Standard §4.3 (Operational boundaries) · ISO 14064-1:2018 §5.2</div>
+    </div>
+
+    <div class="finding f-info">
+      <span class="f-tag ft-info">💡 Suggestion Lead Verifier</span>
+      <div class="f-title">Ajouter un tableau de boundary explicite dans la section 02</div>
+      <div class="f-body">Recommandation : insérer un tableau "Boundary Statement" avec 3 colonnes (Source d'émission | Inclus/Exclus | Justification) avant les données Scope. C'est ce que les verifiers demandent systématiquement en phase de vérification documentaire (Stage 1 audit, ISO 14064-3:2019 §6.4). Cela économise 2–3 allers-retours lors d'un vrai audit.</div>
+    </div>
+  </div>
+
+  <!-- ══ SCOPE 1 REVIEW ══ -->
+  <div class="sec" id="scope1r">
+    <div class="sec-hdr">
+      <span class="sec-num">02</span>
+      <h2 class="sec-title">Revue Scope 1</h2>
+      <span class="badge b-warn">Majorité correcte · 2 points critiques</span>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ Erreur de méthode — Priorité haute</span>
+      <div class="f-title">Facteur énergétique 46 GJ/tNH₃ : source correcte, valeur à ajuster</div>
+      <div class="f-body">
+        Nous avons utilisé 46 GJ/tNH₃ comme intensité énergétique coal gasification. Les sources vérifiées donnent :
+        <ul style="margin:8px 0 8px 18px;font-size:12px;line-height:1.8;">
+          <li><strong>IEA Ammonia Roadmap 2021</strong> : moyenne mondiale actuelle ~41 GJ/t (net basis), BAT coal-based = 36 GJ/t</li>
+          <li><strong>WEF Net-Zero Industry Tracker 2023</strong> : "overall energy intensity averaging 34 GJ/t"</li>
+          <li><strong>c-thru.org Ammonia Technical Brief 2022</strong> : intensité émissions coal gasif. = 4,6 tCO₂/tNH₃ (cohérent avec notre chiffre)</li>
+        </ul>
+        <strong>Impact</strong> : si on prend 41 GJ/t (moyenne IEA) plutôt que 46 GJ/t, la consommation charbon estimée tombe de 1 290 000 t à ~1 148 000 t/an, soit une réduction de ~142 000 tCO₂ sur le Scope 1 total (−8%). La valeur 46 GJ/t que nous utilisons est plus proche d'une installation vieillissante non optimisée — ce qui est plausible pour un site mis en service en 2011–2012, mais devrait être explicitement justifié.
+        <br><br>
+        <strong>Recommandation</strong> : utiliser 41–44 GJ/t comme fourchette centrale, et ajouter une note de sensibilité ±15% sur l'intensité énergétique.
+      </div>
+      <div class="f-ref">Réf : IEA Ammonia Technology Roadmap 2021, p.24 · WEF Net-Zero Industry Tracker 2023 p.8 · c-thru.org Technical Brief Jun.2022 Table 3</div>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ Hypothèse non documentée</span>
+      <div class="f-title">Taux de recyclage CO₂ → urée (59%) : hypothèse centrale non sourcée</div>
+      <div class="f-body">Le calcul des torchères repose sur un taux de recyclage CO₂ de 59% vers l'unité urée. Ce chiffre est cohérent avec la littérature (globalement 50–65% du CO₂ process est recyclé selon la conception de l'AGRU
+        <span class="tip-wrap"><span class="tip-trigger">?</span><span class="tip-box">AGRU = Acid Gas Removal Unit. C'est l'unité qui sépare le CO₂ du syngas avant la synthèse NH₃. Une partie du CO₂ capturé est envoyée à l'unité urée, le reste est purgé ou torché.</span></span>
+        ), mais n'est pas sourcé dans le rapport. Dans un audit réel, le verifier demandera le flow diagram du procédé et les mesures de débit CO₂ à l'AGRU outlet.</div>
+      <div class="f-ref">Réf : ScienceDirect, "CO₂ from oxy-fuel coal-fired plant for urea synthesis" (2023) — ratio 0,733 tCO₂/t urée absorbé (stoichiométrie seule), ~50% du CO₂ process typiquement recyclé (IEA 2021)</div>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Conforme</span>
+      <div class="f-title">Facteur IPCC charbon bitumineux (94,6 kgCO₂/GJ) — correct</div>
+      <div class="f-body">Le facteur 94,6 kgCO₂/GJ pour le charbon bitumineux est la valeur IPCC 2006 Vol.2 Tab.2.2 (NCV basis). C'est la référence standard acceptée par tous les programmes GHG et par le CBAM (Règlement UE 2023/956 Annexe IV qui renvoie à l'IPCC 2006). Aucune mise à jour AR6 sur ce facteur — stable. ✓</div>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Conforme</span>
+      <div class="f-title">Émissions fugitives NH₃ incluses — bonne pratique</div>
+      <div class="f-body">L'inclusion des fugitives NH₃ (converti N₂O × GWP 273 AR6) est une bonne pratique que beaucoup d'inventaires omettent. Le taux de 0,5% est conservateur mais défendable en l'absence de mesures LDAR. Un programme LDAR réduirait cette incertitude à ±10% vs. ±50% actuellement.</div>
+    </div>
+
+    <div class="finding f-info">
+      <span class="f-tag ft-info">💡 Ajout recommandé</span>
+      <div class="f-title">CH₄ des compresseurs et joints — source manquante</div>
+      <div class="f-body">Les fuites de méthane (CH₄) des équipements de compression du syngas ne sont pas mentionnées. Dans un procédé à base de charbon, les lignes haute pression peuvent présenter des fuites CH₄ résiduelles. GWP CH₄ = 29,8 (AR6). Cette source est probablement non matérielle (&lt;1% du total), mais son exclusion doit être documentée avec la justification du seuil de matérialité.</div>
+    </div>
+  </div>
+
+  <!-- ══ SCOPE 2 REVIEW ══ -->
+  <div class="sec" id="scope2r">
+    <div class="sec-hdr">
+      <span class="sec-num">03</span>
+      <h2 class="sec-title">Revue Scope 2</h2>
+      <span class="badge b-ok">Conforme · Recommandation dual reporting</span>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Conforme</span>
+      <div class="f-title">Facteur EVN 2024 (0,681 tCO₂e/MWh) — source valide et récente</div>
+      <div class="f-body">Le facteur 0,681 tCO₂e/MWh publié par Hanoï University of Science &amp; Technology en collaboration avec le Ministère de l'Agriculture et Environnement (mars 2025) est la donnée la plus récente disponible. Il reflète correctement la hausse du charbon à 49,5% du mix 2024. C'est le facteur national officiel au sens du Circular 38/2023/TT-BCT du Ministère de l'Industrie et du Commerce (Vietnam). ✓</div>
+      <div class="f-ref">Réf : HUST/Ministry of Agriculture & Environment 2025 · Circular 38/2023/TT-BCT · greenvietnam.org</div>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ Recommandation ESRS / CSRD</span>
+      <div class="f-title">Dual reporting (location + market-based) absent — requis pour conformité EU</div>
+      <div class="f-body">
+        GHG Protocol Scope 2 Guidance (2015) et ESRS E1 (CSRD) imposent le <strong>dual reporting</strong> : publication des deux méthodes
+        <span class="tip-wrap"><span class="tip-trigger">?</span><span class="tip-box">Location-based : facteur réseau moyen national (EVN 0,681). Market-based : facteur du contrat d'énergie ou certificats d'origine renouvelable (GO/REC). Si l'entreprise n'a pas de PPA/REC, le market-based = résidual mix factor, généralement plus élevé que le location-based.</span></span>
+        même si les deux sont identiques (ce qui est le cas ici en l'absence de PPA ou certificat d'origine renouvelable).
+        <br><br>
+        Pour le CBAM spécifiquement, seule la méthode location-based est utilisée pour le calcul des certificats — donc pas d'impact sur l'exposition financière. Mais pour un client EU soumis CSRD, la mention des deux méthodes est requise.
+      </div>
+      <div class="f-ref">Réf : GHG Protocol Scope 2 Guidance (2015) p.33 · ESRS E1 §45 · GHG Protocol Integration in Regulatory Disclosure (2024) Table B5</div>
+    </div>
+  </div>
+
+  <!-- ══ SCOPE 3 REVIEW ══ -->
+  <div class="sec" id="scope3r">
+    <div class="sec-hdr">
+      <span class="sec-num">04</span>
+      <h2 class="sec-title">Revue Scope 3</h2>
+      <span class="badge b-warn">Sélection défendable · 2 catégories à reconsidérer</span>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Conforme</span>
+      <div class="f-title">Sélection des catégories matérielles conforme au critère GHG Protocol</div>
+      <div class="f-body">Les trois catégories retenues (Cat.1 extraction charbon, Cat.4 transport amont, Cat.9 transport aval) représentent 98,8% du Scope 3 total. La sélection par seuil de matérialité &gt;1% est la méthode recommandée. L'exclusion de Cat.11 (épandage N₂O) avec justification explicite "hors périmètre CBAM" est méthodologiquement correcte — c'est effectivement hors des embedded emissions au sens du Règlement 2023/956.</div>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ Catégorie manquante probable</span>
+      <div class="f-title">Cat.3 — Émissions liées aux activités fuel &amp; énergie non incluses</div>
+      <div class="f-body">
+        La Cat.3 (Fuel and energy-related activities) couvre les émissions amont liées à la production du charbon elle-même (extraction, traitement, transport jusqu'au producteur) — distinct de Cat.1 qui couvre le charbon comme input. En pratique, pour un procédé charbon, Cat.3 inclut notamment :
+        <ul style="margin:8px 0 8px 18px;font-size:12px;line-height:1.8;">
+          <li>Émissions amont de la production d'électricité EVN (T&amp;D losses, ~4–6% du facteur réseau)</li>
+          <li>Émissions liées à l'extraction et traitement du charbon utilisé pour produire l'électricité achetée</li>
+        </ul>
+        Cette catégorie est souvent non matérielle (&lt;1% du total) pour un site à haute intensité Scope 1, mais son exclusion doit être documentée.
+        <span class="tip-wrap"><span class="tip-trigger">?</span><span class="tip-box">GHG Protocol Cat.3 : T&D losses electricity = consommation × 0,04 (pertes réseau ~4%) × FE EVN. Impact estimé : 63 700 MWh × 0,04 × 0,681 = ~1 730 tCO₂e. Non matériel ici, mais à noter.</span></span>
+      </div>
+      <div class="f-ref">Réf : GHG Protocol Value Chain (Scope 3) Standard, Cat.3 p.42</div>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ À vérifier</span>
+      <div class="f-title">Facteur extraction charbon (0,18 tCO₂e/t) — Ecoinvent 3.9 : à préciser</div>
+      <div class="f-body">Le facteur 0,18 tCO₂e/t charbon (Ecoinvent 3.9 coal mining) est dans la fourchette usuelle (0,10–0,25 selon type de mine et géographie). Cependant, deux questions se posent : (1) inclut-il le méthane de mine avec GWP AR6 ou AR5 ? (2) s'agit-il de charbon vietnamien (mines à ciel ouvert, CH₄ modéré) ou de charbon importé (Indonésie/Australie, propriétés différentes) ? La distinction impacte le facteur de ±30%.</div>
+      <div class="f-ref">Réf : Ecoinvent 3.9 process "coal mining, hard coal, surface" vs "underground" — facteurs 0,09 vs 0,25 tCO₂e/t respectivement</div>
+    </div>
+  </div>
+
+  <!-- ══ INTENSITY ══ -->
+  <div class="sec" id="intensity">
+    <div class="sec-hdr">
+      <span class="sec-num">05</span>
+      <h2 class="sec-title">Intensité carbone — Cohérence &amp; benchmark</h2>
+      <span class="badge b-ok">Cohérent avec la littérature</span>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Validé sources ouvertes</span>
+      <div class="f-title">3,36 tCO₂e/t urée (S1+S2) — cohérent avec WEF et c-thru.org</div>
+      <div class="f-body">
+        Notre intensité calculée de 3,36 tCO₂e/t urée (Scope 1+2) se compare aux données de référence :
+        <ul style="margin:8px 0 8px 18px;font-size:12px;line-height:1.8;">
+          <li><strong>WEF Net-Zero Tracker 2023</strong> : "coal gasification ~3.9 tCO₂e/tNH₃" → équivalent ~2,2 tCO₂e/t urée (S1 NH₃ seulement, avant énergie auxiliaire)</li>
+          <li><strong>c-thru.org 2022</strong> : "coal gasification 4,6 tCO₂/tNH₃ direct" → pour 0,567 tNH₃/t urée = 2,61 tCO₂/t urée en S1 NH₃ seul</li>
+          <li>Notre valeur de 3,28 tCO₂/t urée (S1 seul) est <strong>cohérente</strong> en incluant toutes les sources S1 (process + combustion + fugitives + torchères)</li>
+        </ul>
+        <strong>Conclusion</strong> : les chiffres sont défendables et conservateurs. L'écart entre notre valeur et certains benchmarks s'explique par les périmètres différents (S1 seul vs. S1 NH₃ seulement vs. S1+S2 complet).
+      </div>
+    </div>
+
+    <div class="finding f-info">
+      <span class="f-tag ft-info">💡 Amélioration structure</span>
+      <div class="f-title">Ajouter l'intensité en tCO₂e/tN (azote) pour comparabilité sectorielle</div>
+      <div class="f-body">L'indicateur standardisé Yara et IFA est exprimé en <strong>tCO₂e par tonne d'azote produit</strong> (tN), pas en tonne d'urée. L'urée contient 46% d'azote, donc notre intensité de 3,36 tCO₂e/t urée = 7,30 tCO₂e/tN. Cette métrique permet la comparaison avec les producteurs utilisant d'autres engrais azotés (ammoniac, AN, CAN). Elle est également utilisée dans le calculateur carbone de Fertilizers Europe (validé DNV). Le rapport l'affiche déjà dans la section intensité — c'est une bonne chose à maintenir en tête de section.</div>
+    </div>
+  </div>
+
+  <!-- ══ CBAM REVIEW ══ -->
+  <div class="sec" id="cbamr">
+    <div class="sec-hdr">
+      <span class="sec-num">06</span>
+      <h2 class="sec-title">Revue section CBAM</h2>
+      <span class="badge b-ok">Méthodologie correcte · Prix à surveiller</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:.8px;color:var(--t3);margin-left:10px;">Taux : 1 USD = 0,93 EUR (mars 2026)</span>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Conforme</span>
+      <div class="f-title">Périmètre CBAM (Scope 1+2 embedded) correctement appliqué</div>
+      <div class="f-body">Le CBAM (Règlement UE 2023/956, Annexe III) impose pour les fertilisants : émissions directes (S1) + émissions indirectes de l'électricité consommée (S2 location-based) — exactement le périmètre "S1+S2" que nous utilisons. Le Scope 3 est exclu du périmètre CBAM (sauf pour les précurseurs intermédiaires, non applicable ici car ammoniac produit sur site). ✓</div>
+      <div class="f-ref">Réf : Règlement UE 2023/956 Annexe III §1 · Règlement d'exécution UE 2023/1773 Annexe II</div>
+    </div>
+
+    <div class="finding f-ok">
+      <span class="f-tag ft-ok">✓ Correct</span>
+      <div class="f-title">Facteur CBAM phase-in (2,5% en 2026) — conforme Règlement UE 2025/2083</div>
+      <div class="f-body">Le facteur de 2,5% en 2026 est la valeur du Règlement UE 2025/2083 adopté en octobre 2025 (Omnibus simplification). La progression 2026→2034 utilisée est correcte. Note importante : le premier achat de certificats est reporté à février 2027 pour les importations 2026 — c'est bien documenté dans notre section CBAM.</div>
+    </div>
+
+    <div class="finding f-warn">
+      <span class="f-tag ft-warn">⚠ Sensibilité élevée</span>
+      <div class="f-title">Prix ETS 2030 ($97/t) : projection incertaine — fourchette recommandée</div>
+      <div class="f-body">
+        Le prix ETS de $97/t en 2030 est une projection analysts. Les données disponibles montrent une forte variabilité :
+        <ul style="margin:8px 0 8px 18px;font-size:12px;line-height:1.8;">
+          <li>Déc. 2025 : ~$90,6/t (≈€83,90) (actual)</li>
+          <li>H1 2025 : $65–86/t (≈€60–80) (fourchette observée)</li>
+          <li>Projection 2030 analysts consensus : $76–136/t (≈€70–126) selon sources</li>
+        </ul>
+        <strong>Impact sur le calcul CBAM 2030</strong> : à $76/t (≈€70) (-22%), le coût CBAM 2030 tombe à ~$9,9M (≈€9,2M). À $136/t (≈€126/t) (+40%), il monte à ~$17,9M (≈€16,6M). Recommandation : présenter une fourchette basse/centrale/haute dans la simulation, pas une valeur unique.
+        <span class="tip-wrap"><span class="tip-trigger">?</span><span class="tip-box">Selon GMK Center (déc. 2025), certains analystes projettent $136/t ETS en 2030. Le consensus Bloomberg est plus conservateur (~$92–103/t). La vraie incertitude est sur les décisions de politique énergétique EU 2026–2028.</span></span>
+      </div>
+    </div>
+
+    <div class="finding f-info">
+      <span class="f-tag ft-info">💡 Paramètre manquant</span>
+      <div class="f-title">Carbon price paid in Vietnam — déductible CBAM si applicable</div>
+      <div class="f-body">Le Règlement CBAM (Art. 9) permet de déduire du coût CBAM tout prix carbone déjà payé dans le pays d'origine. Le Vietnam prévoit un marché carbone opérationnel d'ici 2028 (Décret 06/2022/NĐ-CP, révisé 2024). À ce jour, aucun prix carbone contraignant n'est en vigueur pour le secteur fertilisants — donc déduction = $0 actuellement. Mais cela pourrait évoluer et doit être mentionné comme variable de réduction potentielle du coût CBAM.</div>
+      <div class="f-ref">Réf : Règlement UE 2023/956 Art.9 · Décret Vietnam 06/2022/ND-CP · Legal500 Vietnam Carbon Market Report</div>
+    </div>
+  </div>
+
+  <!-- ══ CEO READING ══ -->
+  <div class="sec" id="ceo">
+    <div class="sec-hdr">
+      <span class="sec-num">07</span>
+      <h2 class="sec-title">Lecture CEO — Ce que voit un décideur en 10 minutes</h2>
+      <span class="badge b-purple">Posture prospect / client</span>
+    </div>
+
+    <div class="pull">
+      <p>"Je veux savoir rapidement : combien ça me coûte si je ne fais rien, et quel est le premier geste qui change vraiment la donne ?"</p>
+      <cite>— CEO prospect, lecture bilan carbone</cite>
+    </div>
+
+    <div class="dual">
+      <div class="lens lens-verif">
+        <div class="lens-label">👁 Ce que voit le verifier</div>
+        <div class="lens-body">Structure Scope 1/2/3 rigoureuse. Facteurs d'émission sourcés. Intensité cohérente avec la littérature. Lacunes sur boundaries et incertitudes. Nécessite 7 points de données terrain pour certification.</div>
+      </div>
+      <div class="lens lens-ceo">
+        <div class="lens-label">📊 Ce que voit le CEO</div>
+        <div class="lens-body">84% de mes émissions viennent d'une seule source — le charbon. Si je change de combustible partiellement, mes coûts CBAM 2030 tombent de moitié. Le ROI le plus rapide est sur les fuites d'ammoniac : invisible sur le bilan comptable, mais 14 000 tCO₂e/an en moins pour $450k d'investissement.</div>
+      </div>
+    </div>
+
+    <div class="finding f-info">
+      <span class="f-tag ft-info">📊 Lecture CEO</span>
+      <div class="f-title">Les 3 chiffres qu'un CEO retient immédiatement</div>
+      <div class="f-body">
+        <ol style="margin:8px 0 8px 18px;font-size:12px;line-height:2;">
+          <li><strong>$11,8 M/an en 2030</strong> — c'est le coût CBAM si on ne fait rien. C'est le chiffre qui justifie d'agir maintenant. Il devrait être affiché en tête de bilan, pas seulement dans la section 07.</li>
+          <li><strong>3,36 vs. 1,40 tCO₂e/t urée</strong> — l'écart avec un concurrent européen. C'est la "taxe au kilogramme d'urée" pour exporter en Europe. Très parlant pour un directeur commercial.</li>
+          <li><strong>−35% d'ici 2030</strong> — l'objectif client. Si le CEO voit ce chiffre dès le héro de la page, il comprend immédiatement l'enjeu sans lire le reste.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="finding f-purple">
+      <span class="f-tag ft-purple">⚡ Équilibre verifier / CEO</span>
+      <div class="f-title">Ce qui fonctionne bien dans la démo — l'équilibre actuel est bon</div>
+      <div class="f-body">
+        La structure actuelle réussit quelque chose de rare : elle satisfait les deux lectures. Pour le verifier, la rigueur des facteurs IPCC, la séparation claire des scopes et les sources citées sont crédibles. Pour le CEO, le bandeau démo, les KPI cards en tête et la section CBAM en fin de document créent une narration de l'urgence.
+        <br><br>
+        <strong>Ce qui pourrait encore améliorer l'équilibre :</strong>
+        <ul style="margin:8px 0 8px 18px;font-size:12px;line-height:1.8;">
+          <li>Ajouter un encadré "Executive Summary" de 5 lignes tout en haut, avant la section 00 Benchmark — pour le CEO qui ne scrolle pas</li>
+          <li>Les tooltips "?" que tu as demandés sont exactement la bonne solution : la rigueur est disponible sans encombrer la lecture principale</li>
+          <li>Le tableau de ROI dans la simulation est excellent — c'est le format que les CFO comprennent immédiatement</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RECOMMANDATIONS ══ -->
+  <div class="sec" id="reco">
+    <div class="sec-hdr">
+      <span class="sec-num">08</span>
+      <h2 class="sec-title">Plan d'action — Par priorité</h2>
+      <span class="badge b-info">Avant toute présentation client</span>
+    </div>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Action</th>
+          <th>Urgence</th>
+          <th>Effort</th>
+          <th>Impact sur auditabilité</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">1</td>
+          <td><strong>Ajouter Executive Summary 5 lignes</strong><br><span style="font-size:11px;color:var(--t2)">Les 3 chiffres clés + objectif client + appel à action</span></td>
+          <td><span style="color:var(--red)">Immédiat</span></td>
+          <td class="mono">1h</td>
+          <td style="color:var(--t2)">Lisibilité CEO</td>
+        </tr>
+        <tr>
+          <td class="mono">2</td>
+          <td><strong>Ajouter section Boundary Statement</strong><br><span style="font-size:11px;color:var(--t2)">Tableau 3 colonnes : source | inclus/exclus | justification</span></td>
+          <td><span style="color:var(--red)">Priorité haute</span></td>
+          <td class="mono">2h</td>
+          <td style="color:var(--green)">+20% auditabilité</td>
+        </tr>
+        <tr>
+          <td class="mono">3</td>
+          <td><strong>Ajouter déclaration d'incertitude</strong><br><span style="font-size:11px;color:var(--t2)">Tableau simple : source | incertitude estimée | méthode</span></td>
+          <td><span style="color:var(--amber)">Avant audit</span></td>
+          <td class="mono">3h</td>
+          <td style="color:var(--green)">Requis ISO 14064-1 §7.3</td>
+        </tr>
+        <tr>
+          <td class="mono">4</td>
+          <td><strong>Corriger intensité énergétique NH₃</strong><br><span style="font-size:11px;color:var(--t2)">Utiliser 41–44 GJ/t (IEA) plutôt que 46 GJ/t + note sensibilité</span></td>
+          <td><span style="color:var(--amber)">Avant présentation</span></td>
+          <td class="mono">1h</td>
+          <td style="color:var(--amber)">Précision ±8% sur S1</td>
+        </tr>
+        <tr>
+          <td class="mono">5</td>
+          <td><strong>Ajouter dual reporting Scope 2</strong><br><span style="font-size:11px;color:var(--t2)">Ligne market-based (= location-based ici, pas de PPA/REC)</span></td>
+          <td><span style="color:var(--blue)">Pour client CSRD</span></td>
+          <td class="mono">30min</td>
+          <td style="color:var(--blue)">Requis ESRS E1 §45</td>
+        </tr>
+        <tr>
+          <td class="mono">6</td>
+          <td><strong>Documenter politique d'année de base</strong><br><span style="font-size:11px;color:var(--t2)">Année 2024 = base year, critères de recalcul (&gt;5% matérialité)</span></td>
+          <td><span style="color:var(--blue)">Avant suivi pluriannuel</span></td>
+          <td class="mono">1h</td>
+          <td style="color:var(--blue)">ISO 14064-1 §5.5</td>
+        </tr>
+        <tr>
+          <td class="mono">7</td>
+          <td><strong>Fourchette prix ETS dans la simulation</strong><br><span style="font-size:11px;color:var(--t2)">Scénario bas $70 / central $90 / haut $120 en 2030</span></td>
+          <td><span style="color:var(--t2)">Amélioration</span></td>
+          <td class="mono">2h</td>
+          <td style="color:var(--t2)">Crédibilité financière</td>
+        </tr>
+        <tr>
+          <td class="mono">8</td>
+          <td><strong>Ajouter tooltips "?" sur les termes techniques</strong><br><span style="font-size:11px;color:var(--t2)">Scope 1/2/3, CBAM, intensité carbone, GWP, tCO₂e — comme dans ce document</span></td>
+          <td><span style="color:var(--t2)">Amélioration UX</span></td>
+          <td class="mono">3h</td>
+          <td style="color:var(--t2)">Lisibilité CEO non-expert</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pull-red pull">
+      <p>Le seul vrai bloquant pour une présentation client sérieuse : l'absence de déclaration d'incertitude. Tout le reste est documentable en une demi-journée.</p>
+      <cite>— Synthèse Lead Verifier</cite>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div>
+    <div style="font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:4px;">Carbon Hunter</div>
+    <p>Revue critique Lead Verifier + Lecture CEO · Ninh Binh Fertilizer Demo</p>
+    <p>ISO 14064-1:2018 · GHG Protocol Corporate Standard · ISO 14064-3:2019</p>
+  </div>
+  <div style="text-align:right;">
+    <p>Sources vérification : IEA Ammonia Roadmap 2021 · WEF Net-Zero Tracker 2023</p>
+    <p>c-thru.org 2022 · GHG Protocol FAQ · ESRS E1 · Règlement UE 2023/956</p>
+  </div>
+</footer>
+
+<script>
+const secs = document.querySelectorAll('.sec');
+const rls = document.querySelectorAll('.v-rail a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  secs.forEach(s => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; });
+  rls.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+cur));
+}, { passive: true });
+</script>
+</body>
+</html>
