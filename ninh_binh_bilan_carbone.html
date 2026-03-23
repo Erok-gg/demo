@@ -10,12 +10,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   @font-face {
-    font-family: 'JetBrains Mono';
+    font-family: 'Instrument Sans';
     src: url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/files/jetbrains-mono-latin-300-normal.woff2') format('woff2');
-    font-weight: 300; font-display: swap;
+    font-weight: 400; font-display: swap;
   }
   @font-face {
-    font-family: 'JetBrains Mono';
+    font-family: 'Instrument Sans';
     src: url('https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/files/jetbrains-mono-latin-400-normal.woff2') format('woff2');
     font-weight: 400; font-display: swap;
   }
@@ -85,14 +85,14 @@
     color: var(--accent); white-space: nowrap;
   }
   .nav-right {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 9px; font-weight: 400;
     letter-spacing: 1px; text-transform: uppercase;
     color: var(--text-muted); white-space: nowrap;
   }
   .nav-sim-link {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 10px; font-weight: 400;
     letter-spacing: 1.2px; text-transform: uppercase;
     color: var(--accent); background: var(--accent-soft);
     border: 1px solid var(--accent-border);
@@ -114,8 +114,8 @@
     text-decoration: none; cursor: pointer; padding: 3px 0;
   }
   .v-rail-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 9px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase;
     color: var(--text-muted); opacity: 0; transform: translateX(6px);
     transition: opacity .2s, transform .2s; white-space: nowrap; pointer-events: none;
   }
@@ -146,9 +146,9 @@
     pointer-events: none;
   }
   .hero-eyebrow {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Instrument Sans', sans-serif;
     font-size: 10px;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--accent);
@@ -186,9 +186,9 @@
   }
   .meta-item:last-child { border-right: none; }
   .meta-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Instrument Sans', sans-serif;
     font-size: 9px;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -214,9 +214,9 @@
     border-bottom: 1px solid var(--divider);
   }
   .section-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Instrument Sans', sans-serif;
     font-size: 9px;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -230,9 +230,9 @@
   }
   .section-badge {
     margin-left: auto;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Instrument Sans', sans-serif;
     font-size: 9px;
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: 1px;
     padding: 4px 12px;
     border-radius: 100px;
@@ -259,8 +259,8 @@
   .kpi-bar.s3 { background: var(--blue); }
   .kpi-bar.total { background: linear-gradient(90deg, var(--red) 0%, var(--amber) 50%, var(--blue) 100%); }
   .kpi-scope {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 9px; font-weight: 400;
     letter-spacing: 1.8px; text-transform: uppercase;
     margin-bottom: 10px;
   }
@@ -279,8 +279,8 @@
   .kpi-value.s3 { color: var(--blue); }
   .kpi-value.total { color: var(--text); }
   .kpi-unit {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; font-weight: 300; letter-spacing: 0.5px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 9px; font-weight: 400; letter-spacing: 0.5px;
     color: var(--text-muted); margin-bottom: 10px;
   }
   .kpi-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.55; }
@@ -294,8 +294,8 @@
     background: var(--bg);
   }
   .chart-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 9px; font-weight: 400;
     letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--text-muted); margin-bottom: 16px;
   }
@@ -308,8 +308,8 @@
   .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
   .data-table th {
     background: var(--bg-surface);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 9px; font-weight: 400;
     letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--text-muted);
     padding: 11px 16px; text-align: left;
@@ -318,17 +318,17 @@
   .data-table td { padding: 12px 16px; border-bottom: 1px solid var(--divider); color: var(--text); vertical-align: top; }
   .data-table tr:last-child td { border-bottom: none; }
   .data-table tr:hover td { background: var(--bg-surface); }
-  .data-table .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 300; letter-spacing: 0.3px; }
+  .data-table .mono { font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 400; letter-spacing: 0.3px; }
   .data-table .right { text-align: right; }
   .data-table .total-row td { background: var(--bg-surface); font-weight: 600; border-top: 1px solid var(--divider-strong); }
   .sub-text { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .src-text { font-size: 10px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-weight: 300; }
+  .src-text { font-size: 10px; color: var(--text-muted); font-family: 'Instrument Sans', sans-serif; font-weight: 400; }
 
   /* ── PILLS ── */
   .pill {
     display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 8px; font-weight: 400;
     letter-spacing: 1px; text-transform: uppercase;
     padding: 3px 8px; border-radius: 100px;
     white-space: nowrap;
@@ -345,8 +345,8 @@
   }
   .proc-step { background: var(--bg); padding: 18px 20px; min-width: 120px; flex: 1; }
   .proc-name { font-family: 'Instrument Sans', sans-serif; font-weight: 600; font-size: 12px; color: var(--text); margin-bottom: 5px; line-height: 1.3; }
-  .proc-detail { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; letter-spacing: 0.3px; color: var(--text-muted); line-height: 1.5; }
-  .proc-emission { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300; color: var(--red); margin-top: 5px; }
+  .proc-detail { font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 400; letter-spacing: 0.3px; color: var(--text-muted); line-height: 1.5; }
+  .proc-emission { font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 400; color: var(--red); margin-top: 5px; }
 
   /* ── TWO COL ── */
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -355,8 +355,8 @@
   /* ── INFO CARD ── */
   .info-card { border: 1px solid var(--divider); border-radius: 8px; padding: 20px 24px; background: var(--bg); }
   .card-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 9px; font-weight: 400; letter-spacing: 1.5px; text-transform: uppercase;
     color: var(--text-muted); margin-bottom: 14px; padding-bottom: 10px;
     border-bottom: 1px solid var(--divider);
   }
@@ -388,8 +388,8 @@
     display: flex; align-items: center; justify-content: space-between;
     cursor: pointer; list-style: none; padding: 10px 16px;
     background: var(--bg-surface); border: 1px solid var(--divider);
-    border-radius: 8px; font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; font-weight: 300; letter-spacing: 1.2px;
+    border-radius: 8px; font-family: 'Instrument Sans', sans-serif;
+    font-size: 10px; font-weight: 400; letter-spacing: 1.2px;
     text-transform: uppercase; color: var(--text-muted);
     transition: background 0.15s;
     user-select: none;
@@ -410,7 +410,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; border-radius: 50%;
     background: var(--bg-deep); border: 1px solid var(--divider-strong);
-    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 400;
+    font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 400;
     color: var(--text-muted); cursor: help; vertical-align: middle; margin-left: 6px;
     transition: background 0.15s, color 0.15s; flex-shrink: 0;
   }
@@ -418,7 +418,7 @@
   .tip-box {
     position: absolute; bottom: calc(100% + 8px); left: 50%;
     transform: translateX(-50%); background: #0A0A0A; color: #fff;
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 400;
     letter-spacing: 0.3px; line-height: 1.65; padding: 10px 14px;
     border-radius: 8px; width: 280px; white-space: normal;
     opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 500;
@@ -437,23 +437,23 @@
     padding: 8px 0; border-top: 1px solid var(--divider);
     margin-top: 12px;
   }
-  .unc-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
-  .unc-val { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 400; color: var(--amber); background: var(--amber-soft); border: 1px solid var(--amber-border); border-radius: 100px; padding: 2px 10px; }
+  .unc-label { font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+  .unc-val { font-family: 'Instrument Sans', sans-serif; font-size: 11px; font-weight: 400; color: var(--amber); background: var(--amber-soft); border: 1px solid var(--amber-border); border-radius: 100px; padding: 2px 10px; }
 
   /* ── SECTION-HEADER SOURCE TOOLTIP ── */
   .section-src-btn {
     display: inline-flex; align-items: center; justify-content: center;
     width: 18px; height: 18px; border-radius: 50%;
     background: var(--bg-deep); border: 1px solid var(--divider-strong);
-    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 400;
+    font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 400;
     color: var(--text-muted); cursor: help; margin-left: 8px;
     transition: background 0.15s; flex-shrink: 0;
   }
   .section-src-btn:hover { background: var(--text); color: #fff; }
   .section-src-box {
     position: absolute; top: calc(100% + 8px); right: 0;
-    background: #0A0A0A; color: #fff; font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; font-weight: 300; letter-spacing: 0.3px; line-height: 1.65;
+    background: #0A0A0A; color: #fff; font-family: 'Instrument Sans', sans-serif;
+    font-size: 10px; font-weight: 400; letter-spacing: 0.3px; line-height: 1.65;
     padding: 10px 14px; border-radius: 8px; width: 340px; white-space: normal;
     opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 500;
     box-shadow: 0 4px 20px rgba(0,0,0,0.18);
@@ -466,8 +466,8 @@
   .section-src-wrap:hover .section-src-box { opacity: 1; }
 
   .source-note {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; font-weight: 300; letter-spacing: 0.3px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 10px; font-weight: 400; letter-spacing: 0.3px;
     color: var(--text-muted); line-height: 1.75;
     padding: 12px 16px; background: var(--bg-surface);
     border-radius: 6px; margin-top: 12px;
@@ -480,7 +480,7 @@
   .bench-track { flex: 1; background: var(--divider); border-radius: 3px; height: 5px; overflow: hidden; }
   .bench-fill { height: 100%; border-radius: 3px; }
   .bench-val {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 400;
     width: 64px; text-align: right; flex-shrink: 0;
   }
 
@@ -490,7 +490,7 @@
     border-radius: 8px; padding: 28px 32px; margin-bottom: 20px;
   }
   .cbam-eyebrow {
-    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 400;
     letter-spacing: 2px; text-transform: uppercase; color: var(--red); margin-bottom: 10px;
   }
   .cbam-banner h2 {
@@ -507,7 +507,7 @@
   @media (max-width: 680px) { .cbam-exposure { grid-template-columns: 1fr; } }
   .exp-card { background: var(--bg); padding: 22px 24px; }
   .exp-year {
-    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 400;
     letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
   }
   .exp-cost {
@@ -526,7 +526,7 @@
     border: 2px solid var(--bg);
     box-shadow: 0 0 0 1px currentColor;
   }
-  .tl-date { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+  .tl-date { font-family: 'Instrument Sans', sans-serif; font-size: 9px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
   .tl-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
   .tl-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.55; }
 
@@ -546,7 +546,7 @@
     margin-bottom: 4px;
   }
   footer p {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 300;
+    font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 400;
     letter-spacing: 0.3px; color: var(--text-muted); line-height: 1.7;
   }
 </style>
@@ -557,8 +557,8 @@
 <nav>
   <img src="data:image/gif;base64,R0lGODlhlgCKAPf/APX29mnMotbW1uHo5RPUgPz8/FLSm2TFnDh7XsTd0vT9+URERKvRwZGRkYSEhPHy8RLQfmNjY4qKioTNrWxsbBC1bgyKU7LTxMrKyrvUySzSit3d3RC7cVtbWxHAdDLUjRPahMzh2KSkpCHQhenp6QMmF5fRuAlmPgZEKQY4I87OzkLTlA6jY6LMunNzc9nZ2ZLLssbGxhTkije7gSMjIwt7Sjw8POXl5eHh4RvUhE1NTThLQ1NUUxLSfxPXgr6+vvL8+Pf4+Hl5eZvqyHLNpUzZnNHR0UrLkxPdhZ2dnUPOkhfchhvOgaqqqgAAAGrSpTMzM7e3t5zLtzXhlisrK93k4fr6+u7u7mLTouzs7BISErzZzFrcpKnNvhoaGirekHLhsbu7u0PYmH5+fg2VWnTTqSLWiK6ursLXzwsLCxzciVDNl1rVoI7MsQITDMLCwg+wa5zPuY7TtqbRv9347CbdjhLJeqPszILlulvElonFq7Hv1DXVkNvi34nmvglrQeT58NLh2jdYSbGxsYLHqXPareTq59X26BrZhizfkt3q5Pj++/v+/TzWkzTPjBnciCPejeDn5BPVgQ+taRbZhQyGUQ6cXkzSmAdTMiLaiqnu0O3x7x/ZiDjRjwhaNsja0gpzRXXGo9Ll3Sbaiz7PkBPTgFjJmAhgOgQwHRbOfg+pZufs6ZDGrzvOj2nfrPL08+nt7MHy3dfm33/luIjKrgMbEfP19BLLe9n36hLNfAuATc/e18vZ1AUFBQhWNAEJBQEOCQECAgEGBBLOfRLPfRPYgxPZgxLOfBLMfBPYghPag5eXl/n6+mDeqBPZgh5vTOzv7knQlQdNLkPHjRUlHhLPfnzLqCS4eDVHP2rXqNLU03vQq5jIsw6gYNPb2Cs0MOn68xiVX3Sqk23grs/v4RHFd8/f2Pn5+cfz4HrjthTZg0nFkCXfj7TOwx/diyzYjRTNfXjLp43nwNfn4Nbo4EK+iA2QV7e8uVPDkjG/gj3EiTHYkNfh3C7Jhz7dmP///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgOS4wLWMwMDEgNzkuMTRlY2I0MmYyYywgMjAyMy8wMS8xMy0xMjoyNTo0NCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDozNWVhODFmZC00MDZkLWI4NGMtYTYwNS1kNjRiNjE0MWVkODMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QURDMjc5REYyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QURDMjc5REUyNUE2MTFGMTkxN0NDMUY3QTU3RTJGMDMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI0LjIgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjM4NTgzNjctMWU4MS00ZTQ4LWFjMzMtODk2MzhmYzAyMDc3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjM1ZWE4MWZkLTQwNmQtYjg0Yy1hNjA1LWQ2NGI2MTQxZWQ4MyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgH//v38+/r5+Pf29fTz8vHw7+7t7Ovq6ejn5uXk4+Lh4N/e3dzb2tnY19bV1NPS0dDPzs3My8rJyMfGxcTDwsHAv769vLu6ubi3trW0s7KxsK+urayrqqmop6alpKOioaCfnp2cm5qZmJeWlZSTkpGQj46NjIuKiYiHhoWEg4KBgH9+fXx7enl4d3Z1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" style="width:24px;height:24px;object-fit:contain;margin-right:10px;flex-shrink:0;" alt="Logo"><span class="nav-wordmark">Carbon Hunter</span>
   <div style="display:flex;gap:6px;margin-left:auto;">
-    <a href="ninh_binh_bilan_carbone.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:var(--accent);color:#fff;border:1px solid var(--accent);transition:opacity .15s;">Bilan</a>
-    <a href="ninh_binh_simulation.html" style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:transparent;color:var(--accent);border:1px solid var(--accent-border);transition:background .15s;">Simulation</a>
+    <a href="ninh_binh_bilan_carbone.html" style="font-family:'Instrument Sans',sans-serif;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:var(--accent);color:#fff;border:1px solid var(--accent);transition:opacity .15s;">Bilan</a>
+    <a href="ninh_binh_simulation.html" style="font-family:'Instrument Sans',sans-serif;font-size:10px;font-weight:300;letter-spacing:1.2px;text-transform:uppercase;text-decoration:none;padding:5px 16px;border-radius:100px;background:transparent;color:var(--accent);border:1px solid var(--accent-border);transition:background .15s;">Simulation</a>
   </div>
   
 </nav>
@@ -577,10 +577,10 @@
 
 <!-- DEMO BANNER -->
 <div style="background:#0A0A0A;color:#fff;padding:14px 48px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-  <span style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;letter-spacing:3px;text-transform:uppercase;background:#05A764;color:#fff;padding:3px 10px;border-radius:100px;flex-shrink:0;">Démonstration</span>
+  <span style="font-family:'Instrument Sans',sans-serif;font-size:9px;font-weight:300;letter-spacing:3px;text-transform:uppercase;background:#05A764;color:#fff;padding:3px 10px;border-radius:100px;flex-shrink:0;">Démonstration</span>
   <span style="flex:1;min-width:280px;">
     <span style="font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.01em;display:block;margin-bottom:3px;">Ce document illustre l'intérêt commercial et financier d'un bilan carbone à travers des données réalistes reconstituées depuis des benchmarks sectoriels publics.</span>
-    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.3px;">Le lecteur peut sélectionner des pistes d'amélioration et simuler les bénéfices concrets — réduction d'émissions, économies CBAM, retour sur investissement — qu'il obtiendrait en utilisant nos services. Ce rapport ne constitue pas un audit certifié.</span>
+    <span style="font-family:'Instrument Sans',sans-serif;font-size:10px;font-weight:300;color:rgba(255,255,255,0.5);letter-spacing:0.3px;">Le lecteur peut sélectionner des pistes d'amélioration et simuler les bénéfices concrets — réduction d'émissions, économies CBAM, retour sur investissement — qu'il obtiendrait en utilisant nos services. Ce rapport ne constitue pas un audit certifié.</span>
   </span>
 </div>
 
@@ -1285,19 +1285,19 @@
       <div class="exp-card">
         <div class="exp-year">2026 — Facteur 2,5 %</div>
         <div class="exp-cost">~$ 619 000</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €573 000 · 1$ = 0,93€</div>
+        <div style="font-family:'Instrument Sans',sans-serif;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €573 000 · 1$ = 0,93€</div>
         <div class="exp-detail">80 kt export EU × 3,36 tCO₂e/t × $81 × 2,5 %</div>
       </div>
       <div class="exp-card">
         <div class="exp-year">2030 — Facteur 51,5 %</div>
         <div class="exp-cost">~$ 12,7 M</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €11,8 M · 1$ = 0,93€</div>
+        <div style="font-family:'Instrument Sans',sans-serif;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €11,8 M · 1$ = 0,93€</div>
         <div class="exp-detail">80 kt × 3,36 t × $97 × 51,5 %</div>
       </div>
       <div class="exp-card">
         <div class="exp-year">2034 — Facteur 100 %</div>
         <div class="exp-cost">~$ 24,6 M</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €22,8 M · 1$ = 0,93€</div>
+        <div style="font-family:'Instrument Sans',sans-serif;font-size:9px;font-weight:300;color:var(--text-muted);margin-top:2px;">≈ €22,8 M · 1$ = 0,93€</div>
         <div class="exp-detail">80 kt × 3,36 t × $92 · plein tarif</div>
       </div>
     </div>
@@ -1342,7 +1342,7 @@
       <div class="info-card">
         <div class="card-label">Demande de réduction — AgriChem GmbH (Hambourg)</div>
         <div class="info-row"><span class="k">Réduction cible 2030</span><span class="v v-red">−648 900 tCO₂e</span></div>
-        <div class="info-row"><span class="k">Économie CBAM si objectif atteint</span><span class="v v-green">~$ 5,2 M/an <span style="font-family:'JetBrains Mono',monospace;font-weight:300;font-size:10px;color:var(--text-muted);">(≈ €4,8 M)</span></span></div>
+        <div class="info-row"><span class="k">Économie CBAM si objectif atteint</span><span class="v v-green">~$ 5,2 M/an <span style="font-family:'Instrument Sans',sans-serif;font-weight:400;font-size:10px;color:var(--text-muted);">(≈ €4,8 M)</span></span></div>
         <div class="info-row"><span class="k">Piste principale</span><span class="v">Substitution charbon → gaz naturel</span></div>
         <div class="info-row"><span class="k">Piste complémentaire</span><span class="v">Solaire toiture (Scope 2)</span></div>
         <div class="info-row"><span class="k">Horizon long terme</span><span class="v">CCS gazéifieur + NH₃ vert</span></div>
@@ -1377,7 +1377,7 @@ const MUTED = 'rgba(10,10,10,0.3)', BORDER = 'rgba(0,0,0,0.07)';
 
 Chart.defaults.color = 'rgba(10,10,10,0.42)';
 Chart.defaults.borderColor = BORDER;
-Chart.defaults.font.family = "'JetBrains Mono', monospace";
+Chart.defaults.font.family = "'Instrument Sans', sans-serif";
 Chart.defaults.font.size = 10;
 Chart.defaults.font.weight = '300';
 
